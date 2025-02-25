@@ -1,11 +1,11 @@
 package exe
 
-import (
-	"iago/isa"
-)
+// import (
+// 	"iago/isa"
+// )
 
 type Elf struct {
-	instruction_trie isa.ISA
+	// instruction_trie Trie(string)
 	arch int // either 32 or 64
 }
 
