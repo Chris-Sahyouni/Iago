@@ -1,15 +1,16 @@
 package main
 
 import (
-	"fmt"
-	"strings"
-	"os"
+	"bytes"
+	// "encoding/hex"
 	"errors"
+	"fmt"
 	"iago/exe"
-	"encoding/hex"
+	"os"
+	"strings"
 )
 
-var current_file *exe.Executable
+var current_file exe.Executable
 
 
 func main() {
@@ -63,28 +64,27 @@ func Load(args []string) error {
 	if err != nil {
 		return err
 	}
-	hex_contents := hex.EncodeToString(file_bytes)
-	exe_constructors := map[string]func(string) (*exe.Executable, error){
+	exe_constructors := map[string]func([]byte) (exe.Executable, error){
 		"elf": exe.NewElf,
 	}
-	file_type, err := DetermineFileType(hex_contents)
+	file_type, err := DetermineFileType(file_bytes)
 	if err != nil {
 		return err
 	}
 	constructor := exe_constructors[file_type]
-	new_executable_ptr, err := constructor(hex_contents)
+	new_executable, err := constructor(file_bytes)
 	if err != nil {
 		return err
 	}
-	current_file = new_executable_ptr
+	current_file = new_executable
 
 	return nil
 }
 
 // determine the file type and parse it into the relevant struct
-func DetermineFileType(hex_contents string) (string, error) {
-	elf_magic := "7f454c46"
-	if hex_contents[:4] == elf_magic {
+func DetermineFileType(file_bytes []byte) (string, error) {
+	elf_magic := []byte{'\x7f', '\x45', '\x4c', '\x46'}
+	if bytes.Equal(file_bytes[:4], elf_magic) {
 		return "elf", nil
 	}
 
