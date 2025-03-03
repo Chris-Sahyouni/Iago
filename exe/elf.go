@@ -1,7 +1,7 @@
 package exe
 
 import (
-	// "iago/isa"
+	"iago/isa"
 	// "iago/suffixtree"
 	"encoding/binary"
 	"errors"
@@ -10,82 +10,116 @@ import (
 type Elf struct {
 	arch       uint // either 32 or 64
 	endianness string
+	isa        isa.ISA
+	contents   []byte
+	// section_header_offset uint
+}
+
+type elfHeaderEntry struct {
+	offset32 uint
+	offset64 uint
+	size32 uint
+	size64 uint
+}
+
+// map from all necessary elf header field names to their locations and sizes
+// fields have been renamed for clarity
+var elfHeader = map[string]elfHeaderEntry{
+	"arch": {0x04, 0x04, 1, 1},
+	"endianness": {0x05, 0x05, 1, 1},
+	"isa": {0x12, 0x12, 2, 2},
+	"entry_point": {0x18, 0x18, 4, 8},
+	"section_header_table_offset": {0x20, 0x28, 4, 8},
+	"section_header_table_entry_size": {0x2e, 0x3a, 2, 2},
+	"section_header_table_num_entries": {0x30, 0x3c, 2, 2},
+	"section_header_table_names_index": {0x32, 0x3e, 2, 2},
 }
 
 func (e Elf) foo() {
 
 }
 
-func NewElf(elf []byte) (Executable, error) {
+func NewElf(elfContents []byte) (Executable, error) {
 
-	arch, err := elf_arch(elf)
+	arch, err := elfArch(elfContents)
 	if err != nil {
 		return nil, err
 	}
 
-	endianness, err := elf_endianness(elf)
+	endianness, err := elfEndianness(elfContents)
 	if err != nil {
 		return nil, err
 	}
 
-	section_header_offset := elf_section_header_offset(elf, arch, endianness)
-
-	return Elf{
-		arch:       arch,
+	elf := Elf{
+		arch: arch,
 		endianness: endianness,
-	}, nil
+		contents: elfContents,
+		isa: nil,
+	}
+
+	elf.setISA()
+
+	return elf, nil
 }
 
-func elf_arch(elf []byte) (uint, error) {
-	arch_index := 4
-	if elf[arch_index] == 1 {
+
+
+func elfArch(elfContents []byte) (uint, error) {
+	archOffset := 4
+	if elfContents[archOffset] == 1 {
 		return 32, nil
-	} else if elf[arch_index] == 2 {
+	} else if elfContents[archOffset] == 2 {
 		return 64, nil
 	} else {
 		return 0, errors.New("invalid ELF file")
 	}
 }
 
-func elf_endianness(elf []byte) (string, error) {
-	endianness_index := 5
-	if elf[endianness_index] == 1 {
+func elfEndianness(elfContents []byte) (string, error) {
+	endiannessOffset := 5
+	if elfContents[endiannessOffset] == 1 {
 		return "little", nil
-	} else if elf[endianness_index] == 2 {
+	} else if elfContents[endiannessOffset] == 2 {
 		return "big", nil
 	} else {
 		return "", errors.New("invalid ELF file")
 	}
 }
 
-// try to generalize this so you don't have to keep repeating yourself
-func elf_section_header_offset(elf []byte, arch uint, endianness string) uint {
-	var section_header_offset []byte
-	var sect_hdr_offst_loc int
-	var sect_hrd_offst_size int
-	if arch == 64 {
-		sect_hdr_offst_loc = 0x28
-		sect_hrd_offst_size = 8
-	} else if arch == 32 {
-		sect_hdr_offst_loc = 0x20
-		sect_hrd_offst_size = 4
+func (e *Elf) headerValue(field string) uint {
+	var offset uint
+	var size uint
+	fieldInfo := elfHeader[field]
+	if e.arch == 32 {
+		offset = fieldInfo.offset32
+		size = fieldInfo.size32
+	} else if e.arch == 64 {
+		offset = fieldInfo.offset64
+		size = fieldInfo.size64
 	}
-	section_header_offset = elf[sect_hdr_offst_loc : sect_hdr_offst_loc+sect_hrd_offst_size]
-	if endianness == "big" {
-		if arch == 64 {
-			return uint(binary.BigEndian.Uint64(section_header_offset))
-		}
-		if arch == 32 {
-			return uint(binary.BigEndian.Uint32(section_header_offset))
-		}
-	}
-	if endianness == "little" {
-		if arch == 64 {
-			return uint(binary.LittleEndian.Uint64(section_header_offset))
-		}
-		if arch == 32 {
-			return uint(binary.LittleEndian.Uint32(section_header_offset))
-		}
+
+	if e.endianness == "big" {
+		return uint(binary.BigEndian.Uint64(e.contents[offset:offset + size]))
+	} else if e.endianness == "little" {
+		return uint(binary.LittleEndian.Uint64(e.contents[offset:offset + size]))
 	}
 	return 0 // this will never be reached
 }
+
+func (e *Elf) setISA() (isa.ISA, error) {
+
+	// maps the value present in the elf file to an ISA
+	var supportedISAs = map[uint]isa.ISA{
+		0x03: isa.X86{},
+		0x3e: isa.X86{},
+	}
+
+	isa, ok := supportedISAs[e.headerValue("isa")]
+	if ok {
+		return isa, nil
+	}
+
+	return nil, errors.New("unsupported instruction set")
+}
+

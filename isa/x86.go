@@ -1,12 +1,12 @@
 package isa
 
-type x86 struct {}
+type X86 struct {}
 
-func (x86) InstructionSize() int {
+func (X86) InstructionSize() int {
 	return 1
 }
 
-func (x86) GadgetTerminator() string {
+func (X86) GadgetTerminator() string {
 	return "c3"
 }
 
