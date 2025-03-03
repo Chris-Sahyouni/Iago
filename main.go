@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	// "encoding/hex"
 	"errors"
 	"fmt"
 	"iago/exe"
@@ -10,7 +9,7 @@ import (
 	"strings"
 )
 
-var current_file exe.Executable
+var CurrentFile exe.Executable
 
 
 func main() {
@@ -20,16 +19,16 @@ func main() {
 
 
 	for {
-		var user_input string
+		var userInput string
 		fmt.Print("> ")
-		fmt.Scanln(&user_input)
-		parse_user_input(user_input)
+		fmt.Scanln(&userInput)
+		parseUserInput(userInput)
 	}
 
 }
 
-func parse_user_input(user_input string) {
-	parsed := strings.Split(user_input, " ")
+func parseUserInput(userInput string) {
+	parsed := strings.Split(userInput, " ")
 	cmd := parsed[0]
 	var args []string
 	if len(parsed) > 1 {
@@ -46,7 +45,8 @@ func parse_user_input(user_input string) {
 			fmt.Println(err)
 			return
 		}
-
+	default:
+		fmt.Println("Unrecognized command")
 	}
 
 }
@@ -60,40 +60,40 @@ func Load(args []string) error {
 	}
 
 	path := args[0]
-	file_bytes, err := os.ReadFile(path)
+	fileBytes, err := os.ReadFile(path)
 	if err != nil {
 		return err
 	}
-	exe_constructors := map[string]func([]byte) (exe.Executable, error){
+	exeConstructors := map[string]func([]byte) (exe.Executable, error){
 		"elf": exe.NewElf,
 	}
-	file_type, err := DetermineFileType(file_bytes)
+	fileType, err := DetermineFileType(fileBytes)
 	if err != nil {
 		return err
 	}
-	constructor := exe_constructors[file_type]
-	new_executable, err := constructor(file_bytes)
+	constructor := exeConstructors[fileType]
+	newExecutable, err := constructor(fileBytes)
 	if err != nil {
 		return err
 	}
-	current_file = new_executable
+	CurrentFile = newExecutable
 
 	return nil
 }
 
-// determine the file type and parse it into the relevant struct
-func DetermineFileType(file_bytes []byte) (string, error) {
-	elf_magic := []byte{'\x7f', '\x45', '\x4c', '\x46'}
-	if bytes.Equal(file_bytes[:4], elf_magic) {
+func DetermineFileType(fileBytes []byte) (string, error) {
+	elfMagic := []byte{'\x7f', '\x45', '\x4c', '\x46'}
+	if bytes.Equal(fileBytes[:4], elfMagic) {
 		return "elf", nil
 	}
 
 	return "", errors.New("unrecognized file format")
 }
 
+
 func Help() {
 	fmt.Println("Commands:")
-	fmt.Println("    help" + strings.Repeat(" ", 16 - len("help")) + "Show help")
 	fmt.Println("    exit" + strings.Repeat(" ", 16 - len("quit")) + "Exit the interactive shell")
+	fmt.Println("    help" + strings.Repeat(" ", 16 - len("help")) + "Show help")
 	fmt.Println("    load <path>" + strings.Repeat(" ", 16 - len("load <path>")) + "Sets the current file for analysis")
 }

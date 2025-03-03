@@ -2,17 +2,15 @@ package exe
 
 import (
 	"iago/isa"
-	// "iago/suffixtree"
 	"encoding/binary"
 	"errors"
 )
 
 type Elf struct {
 	arch       uint // either 32 or 64
-	endianness string
+	endianness string // either "big" or "little"
 	isa        isa.ISA
 	contents   []byte
-	// section_header_offset uint
 }
 
 type elfHeaderEntry struct {
@@ -28,11 +26,16 @@ var elfHeader = map[string]elfHeaderEntry{
 	"arch": {0x04, 0x04, 1, 1},
 	"endianness": {0x05, 0x05, 1, 1},
 	"isa": {0x12, 0x12, 2, 2},
-	"entry_point": {0x18, 0x18, 4, 8},
-	"section_header_table_offset": {0x20, 0x28, 4, 8},
-	"section_header_table_entry_size": {0x2e, 0x3a, 2, 2},
-	"section_header_table_num_entries": {0x30, 0x3c, 2, 2},
-	"section_header_table_names_index": {0x32, 0x3e, 2, 2},
+	"entry point": {0x18, 0x18, 4, 8},
+	"program header table offset": {0x1c, 0x20, 4, 8},
+	"program header table entry size": {0x2a, 0x36, 2, 2},
+	"program header table num entries": {0x2c, 0x38, 2, 2},
+
+	// not sure we need the section header yet
+	// "section_header_table_offset": {0x20, 0x28, 4, 8},
+	// "section_header_table_entry_size": {0x2e, 0x3a, 2, 2},
+	// "section_header_table_num_entries": {0x30, 0x3c, 2, 2},
+	// "section_header_table_names_index": {0x32, 0x3e, 2, 2},
 }
 
 func (e Elf) foo() {
