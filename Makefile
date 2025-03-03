@@ -14,6 +14,12 @@ run:
 test:
 	go test ./....
 
+clean:
+	rm -rf bin/*
+
+clean_binaries:
+	rm -rf test_programs/bin/*
+
 # add some logic to compile all c src files in test_programs
 binaries:
-	$(CC) -o test_programs/square test_programs/square.c
+	$(CC) -o test_programs/bin/square test_programs/square.c
