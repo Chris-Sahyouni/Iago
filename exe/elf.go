@@ -1,9 +1,9 @@
 package exe
 
 import (
-	"iago/isa"
 	"encoding/binary"
 	"errors"
+	"iago/isa"
 )
 
 type Elf struct {
@@ -25,7 +25,7 @@ type elfHeaderEntry struct {
 var elfHeader = map[string]elfHeaderEntry{
 	"arch": {0x04, 0x04, 1, 1},
 	"endianness": {0x05, 0x05, 1, 1},
-	"isa": {0x12, 0x12, 2, 2},
+	"isa": {0x12, 0x12, 1, 1}, // technically this field is 2 bytes, but the 2nd byte is only used for two obscure ISAs
 	"entry point": {0x18, 0x18, 4, 8},
 	"program header table offset": {0x1c, 0x20, 4, 8},
 	"program header table entry size": {0x2a, 0x36, 2, 2},
@@ -102,11 +102,28 @@ func (e *Elf) headerValue(field string) uint {
 		size = fieldInfo.size64
 	}
 
-	if e.endianness == "big" {
-		return uint(binary.BigEndian.Uint64(e.contents[offset:offset + size]))
-	} else if e.endianness == "little" {
-		return uint(binary.LittleEndian.Uint64(e.contents[offset:offset + size]))
+	value := e.contents[offset:offset + size]
+
+	if size == 1 {
+		return uint(value[0])
 	}
+
+	var byteOrder binary.ByteOrder
+
+	if e.endianness == "big" {
+		byteOrder = binary.BigEndian
+	} else if e.endianness == "little" {
+		byteOrder = binary.LittleEndian
+	}
+
+	if size == 2 {
+		return uint(byteOrder.Uint16(value))
+	} else if size == 4 {
+		return uint(byteOrder.Uint32(value))
+	} else if size == 8 {
+		return uint(byteOrder.Uint64(value))
+	}
+
 	return 0 // this will never be reached
 }
 

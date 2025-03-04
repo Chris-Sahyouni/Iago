@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"iago/exe"
 	"os"
+	"bufio"
 	"strings"
 )
 
@@ -17,23 +18,40 @@ func main() {
 	fmt.Println("Iago interactive shell")
 	fmt.Println("Run help to view available commands")
 
+	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		var userInput string
+		var line string
 		fmt.Print("> ")
-		fmt.Scanln(&userInput)
-		parseUserInput(userInput)
+		line, err := reader.ReadString('\n')
+		if err != nil {
+			// change this later
+			fmt.Println(err)
+			continue
+		}
+		cmd, args, flags := parseUserInput(line)
+		executeCommand(cmd, args, flags)
 	}
 
 }
 
-func parseUserInput(userInput string) {
+func parseUserInput(line string) (string, []string, []string) {
+	userInput := strings.TrimSpace(line)
 	parsed := strings.Split(userInput, " ")
 	cmd := parsed[0]
 	var args []string
-	if len(parsed) > 1 {
-		args = parsed[1:]
+	var flags []string
+	for _, s := range parsed[1:] {
+		if len(s) > 2 && s[0:2] == "--" {
+			flags = append(flags, s)
+		} else {
+			args = append(args, s)
+		}
 	}
+	return cmd, args, flags
+}
+
+func executeCommand(cmd string, args []string, flags []string) {
 	switch cmd {
 	case "help":
 		Help()
@@ -46,7 +64,7 @@ func parseUserInput(userInput string) {
 			return
 		}
 	default:
-		fmt.Println("Unrecognized command")
+		fmt.Println("unrecognized command")
 	}
 
 }
