@@ -12,18 +12,27 @@ type Elf struct {
 	endianness string // either "big" or "little"
 	isa        isa.ISA
 	contents   []byte
+	programHeaderTableOffset uint
+	executableSegments []Segment
 }
 
-type elfHeaderEntry struct {
+type elfField struct {
 	offset32 uint
 	offset64 uint
 	size32 uint
 	size64 uint
 }
 
+type Segment struct {
+	vaddr uint
+	offset uint
+	size uint
+}
+
+
 // map from all necessary elf header field names to their locations and sizes
 // fields have been renamed for clarity
-var elfHeader = map[string]elfHeaderEntry{
+var elfHeader = map[string]elfField {
 	"arch": {0x04, 0x04, 1, 1},
 	"endianness": {0x05, 0x05, 1,  1},
 	"isa": {0x12, 0x12, 1, 1}, // technically this field is 2 bytes, but the 2nd byte is only used for two obscure ISAs
@@ -38,6 +47,16 @@ var elfHeader = map[string]elfHeaderEntry{
 	// "section_header_table_num_entries": {0x30, 0x3c, 2, 2},
 	// "section_header_table_names_index": {0x32, 0x3e, 2, 2},
 }
+
+var programHeaderEntry = map[string]elfField {
+	"segment type": {0x00, 0x00, 4, 4},
+	"flags": {0x18, 0x04, 4, 4},
+	"segment offset": {0x04, 0x08, 4, 8},
+	"virtual address": {0x08, 0x10, 4, 8},
+	"file size": {0x10, 0x20, 4, 8},
+	"mem size": {0x14, 0x28, 4, 8},
+}
+
 
 func (e *Elf) Info()  {
 	fmt.Println("  File Type: ELF")
@@ -62,8 +81,11 @@ func NewElf(elfContents []byte) (Executable, error) {
 		arch: arch,
 		endianness: endianness,
 		contents: elfContents,
+		programHeaderTableOffset: 0,
 		isa: nil,
 	}
+
+
 
 	err = elf.setISA()
 	if err != nil {
@@ -107,10 +129,11 @@ func elfEndianness(elfContents []byte) (string, error) {
 	}
 }
 
-func (e *Elf) headerValue(field string) (uint, error) {
+func (e *Elf) fieldValue(field string, targetHeader map[string]elfField, baseOffset uint) (uint, error) {
 	var offset uint
 	var size uint
-	fieldInfo := elfHeader[field]
+
+	fieldInfo := targetHeader[field]
 	if e.arch == 32 {
 		offset = fieldInfo.offset32
 		size = fieldInfo.size32
@@ -119,8 +142,10 @@ func (e *Elf) headerValue(field string) (uint, error) {
 		size = fieldInfo.size64
 	}
 
+	offset += baseOffset
+
 	if len(e.contents) < int(offset + size) {
-		return 0, errors.New("ELF header value offset outside file bounds")
+		return 0, errors.New("value offset outside file bounds")
 	}
 
 	value := e.contents[offset:offset + size]
@@ -156,7 +181,7 @@ func (e *Elf) setISA() error {
 		0x3e: isa.X86{},
 	}
 
-	value, err := e.headerValue("isa")
+	value, err := e.fieldValue("isa", elfHeader, 0)
 	if err != nil {
 		return err
 	}
@@ -169,4 +194,53 @@ func (e *Elf) setISA() error {
 
 	return errors.New("unsupported instruction set")
 }
+
+func (e *Elf) locateExecutableSegments() error {
+	var segments []Segment
+
+	programHeaderTableOffset, err := e.fieldValue("program header table offset", elfHeader, 0)
+	if err != nil {
+		return err
+	}
+	programHeaderTableEntrySize, err := e.fieldValue("program header table entry size", elfHeader, 0)
+	if err != nil {
+		return err
+	}
+	numEntries, err := e.fieldValue("program header table num entries", elfHeader, 0)
+	if err != nil {
+		return err
+	}
+	for i := range numEntries {
+		entryOffset := programHeaderTableOffset + (i * programHeaderTableEntrySize)
+		flags, err := e.fieldValue("flags", programHeaderEntry, entryOffset)
+		if err != nil {
+			return err
+		}
+		var executableFlag uint = 0x1
+		if flags == executableFlag {
+			segmentOffset, err := e.fieldValue("segment offset", programHeaderEntry, entryOffset)
+			if err != nil {
+				return err
+			}
+			virtualAddress, err := e.fieldValue("virtual address", programHeaderEntry, entryOffset)
+			if err != nil {
+				return err
+			}
+			sizeInFile, err := e.fieldValue("file size", programHeaderEntry, entryOffset)
+			if err != nil {
+				return err
+			}
+
+			segments = append(segments, Segment{
+				vaddr: virtualAddress,
+				offset: segmentOffset,
+				size: sizeInFile,
+			})
+
+		}
+	}
+	e.executableSegments = segments
+	return nil
+}
+
 
