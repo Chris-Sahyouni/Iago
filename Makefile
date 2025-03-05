@@ -8,15 +8,19 @@ all: build
 build:
 	go build -o bin/iago ./...
 
+.PHONY: run
 run:
 	go run main.go
 
+.PHONY: test
 test:
-	go test ./...
+	go test ./... -v
 
+.PHONY: clean
 clean:
 	rm -rf bin/*
 
+.PHONY: clean_binaries
 clean_binaries:
 	rm -rf test_programs/bin/*
 

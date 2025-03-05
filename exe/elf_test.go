@@ -59,7 +59,7 @@ func TestNewElf(t *testing.T) {
 		actual, err := NewElf(contents)
 		if name == "corrupt" {
 			if err == nil {
-				t.Fail()
+				t.Error("Should have failed on corrupt file")
 			}
 		} else {
 			if actual.(*Elf).arch != expected.Arch {
@@ -71,6 +71,61 @@ func TestNewElf(t *testing.T) {
 			if actual.(*Elf).isa != expected.Isa {
 				t.Fail()
 			}
+		}
+	}
+}
+
+// this test might fail if you recompile the test binaries
+func TestFieldValue(t *testing.T) {
+	var expectedResults = map[string]struct {
+		EntryPnt uint
+		PHdrEntrySz uint
+		PHdrVirtAddr uint // of the first entry of the Program Header Table
+		Flags uint // of the first entry of the Program Header Table
+		} {
+		"square32": {EntryPnt: 0x1070, PHdrEntrySz: 32, PHdrVirtAddr: 0x34, Flags: 0x4},
+		"square64": {EntryPnt: 0x1040, PHdrEntrySz: 56, PHdrVirtAddr: 0x40, Flags: 0x4},
+	}
+	for name, contents := range testBinaries {
+		expected := expectedResults[name]
+		elf, err := NewElf(contents)
+		if err != nil {
+			t.Error(err)
+		}
+		if name == "corrupt" {
+			continue
+		}
+		value, err := elf.(*Elf).fieldValue("entry point", elfHeader, 0)
+		if err != nil {
+			t.Error(err)
+		}
+		if value != expected.EntryPnt {
+			t.Fail()
+		}
+		value, err = elf.(*Elf).fieldValue("program header table entry size", elfHeader, 0)
+		if err != nil {
+			t.Error(err)
+		}
+		if value != expected.PHdrEntrySz {
+			t.Fail()
+		}
+		PHhdrOffset, err := elf.(*Elf).fieldValue("program header table offset", elfHeader, 0)
+		if err != nil {
+			t.Error(err)
+		}
+		value, err = elf.(*Elf).fieldValue("virtual address", programHeaderEntry, PHhdrOffset)
+		if err != nil {
+			t.Error(err)
+		}
+		if value != expected.PHdrVirtAddr {
+			t.Fail()
+		}
+		value, err = elf.(*Elf).fieldValue("flags", programHeaderEntry, PHhdrOffset)
+		if err != nil {
+			t.Error(err)
+		}
+		if value != expected.Flags {
+			t.Fail()
 		}
 	}
 }
