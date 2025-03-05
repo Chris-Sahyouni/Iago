@@ -77,6 +77,11 @@ func NewElf(elfContents []byte) (Executable, error) {
 
 func elfArch(elfContents []byte) (uint, error) {
 	archOffset := 4
+
+	if len(elfContents) < archOffset {
+		return 0, errors.New("invalid ELF file")
+	}
+
 	if elfContents[archOffset] == 1 {
 		return 32, nil
 	} else if elfContents[archOffset] == 2 {
@@ -88,6 +93,11 @@ func elfArch(elfContents []byte) (uint, error) {
 
 func elfEndianness(elfContents []byte) (string, error) {
 	endiannessOffset := 5
+
+	if len(elfContents) < endiannessOffset {
+		return "", errors.New("invalid ELF file")
+	}
+
 	if elfContents[endiannessOffset] == 1 {
 		return "little", nil
 	} else if elfContents[endiannessOffset] == 2 {
@@ -97,7 +107,7 @@ func elfEndianness(elfContents []byte) (string, error) {
 	}
 }
 
-func (e *Elf) headerValue(field string) uint {
+func (e *Elf) headerValue(field string) (uint, error) {
 	var offset uint
 	var size uint
 	fieldInfo := elfHeader[field]
@@ -109,10 +119,14 @@ func (e *Elf) headerValue(field string) uint {
 		size = fieldInfo.size64
 	}
 
+	if len(e.contents) < int(offset + size) {
+		return 0, errors.New("ELF header value offset outside file bounds")
+	}
+
 	value := e.contents[offset:offset + size]
 
 	if size == 1 {
-		return uint(value[0])
+		return uint(value[0]), nil
 	}
 
 	var byteOrder binary.ByteOrder
@@ -124,14 +138,14 @@ func (e *Elf) headerValue(field string) uint {
 	}
 
 	if size == 2 {
-		return uint(byteOrder.Uint16(value))
+		return uint(byteOrder.Uint16(value)), nil
 	} else if size == 4 {
-		return uint(byteOrder.Uint32(value))
+		return uint(byteOrder.Uint32(value)), nil
 	} else if size == 8 {
-		return uint(byteOrder.Uint64(value))
+		return uint(byteOrder.Uint64(value)), nil
 	}
 
-	return 0 // this will never be reached
+	return 0, nil // this will never be reached
 }
 
 func (e *Elf) setISA() error {
@@ -142,7 +156,12 @@ func (e *Elf) setISA() error {
 		0x3e: isa.X86{},
 	}
 
-	isa, ok := supportedISAs[e.headerValue("isa")]
+	value, err := e.headerValue("isa")
+	if err != nil {
+		return err
+	}
+
+	isa, ok := supportedISAs[value]
 	if ok {
 		e.isa = isa
 		return nil
