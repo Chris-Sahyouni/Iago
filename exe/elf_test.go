@@ -129,3 +129,41 @@ func TestFieldValue(t *testing.T) {
 		}
 	}
 }
+
+func TestLocateExecutableSegments(t *testing.T) {
+
+	var expectedResults = map[string][]Segment {
+		"square32": {
+			Segment{
+				Offset: 0x1000,
+				VAddr: 0x1000,
+				Size: 0x294,
+			},
+		},
+		"square64": {
+			Segment{
+				Offset: 0x1000,
+				VAddr: 0x1000,
+				Size: 0x1e5,
+			},
+		},
+	}
+
+	for name, contents := range testBinaries {
+		expected := expectedResults[name]
+		elf, err := NewElf(contents)
+		if err != nil {
+			t.Error(err)
+		}
+		err = elf.(*Elf).locateExecutableSegments()
+		if err != nil {
+			t.Error(err)
+		}
+		actual := elf.(*Elf).ExecutableSegments
+		for i := range len(actual) {
+			if actual[i] != expected[i] {
+				t.Fail()
+			}
+		}
+	}
+}

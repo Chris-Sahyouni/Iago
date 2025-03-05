@@ -13,7 +13,7 @@ type Elf struct {
 	isa        isa.ISA
 	contents   []byte
 	programHeaderTableOffset uint
-	executableSegments []Segment
+	ExecutableSegments []Segment
 }
 
 type elfField struct {
@@ -24,9 +24,9 @@ type elfField struct {
 }
 
 type Segment struct {
-	vaddr uint
-	offset uint
-	size uint
+	VAddr uint
+	Offset uint
+	Size uint
 }
 
 
@@ -88,6 +88,11 @@ func NewElf(elfContents []byte) (Executable, error) {
 
 
 	err = elf.setISA()
+	if err != nil {
+		return nil, err
+	}
+
+	err = elf.locateExecutableSegments()
 	if err != nil {
 		return nil, err
 	}
@@ -232,14 +237,14 @@ func (e *Elf) locateExecutableSegments() error {
 			}
 
 			segments = append(segments, Segment{
-				vaddr: virtualAddress,
-				offset: segmentOffset,
-				size: sizeInFile,
+				VAddr: virtualAddress,
+				Offset: segmentOffset,
+				Size: sizeInFile,
 			})
 
 		}
 	}
-	e.executableSegments = segments
+	e.ExecutableSegments = segments
 	return nil
 }
 
