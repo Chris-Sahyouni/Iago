@@ -2,6 +2,7 @@ package exe
 
 import (
 	"encoding/binary"
+	"encoding/hex"
 	"errors"
 	"iago/isa"
 	"fmt"
@@ -30,8 +31,6 @@ type Segment struct {
 }
 
 
-// map from all necessary elf header field names to their locations and sizes
-// fields have been renamed for clarity
 var elfHeader = map[string]elfField {
 	"arch": {0x04, 0x04, 1, 1},
 	"endianness": {0x05, 0x05, 1,  1},
@@ -249,3 +248,18 @@ func (e *Elf) locateExecutableSegments() error {
 }
 
 
+func (e *Elf) InstructionStream() []Instruction {
+	var instructionStream []Instruction
+	instructionSize := e.isa.InstructionSize()
+	for _, segment := range e.ExecutableSegments {
+		segmentContents := e.contents[segment.Offset:segment.Offset + segment.Size]
+		for i := 0; i < len(segmentContents); i += instructionSize {
+			newInstruction := Instruction{
+				Op: hex.EncodeToString(segmentContents[i:i+instructionSize]),
+				Vaddr: segment.VAddr + uint(i),
+			}
+			instructionStream = append(instructionStream, newInstruction)
+		}
+	}
+	return instructionStream
+}
