@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"iago/isa"
+	"fmt"
 )
 
 type Elf struct {
@@ -24,7 +25,7 @@ type elfHeaderEntry struct {
 // fields have been renamed for clarity
 var elfHeader = map[string]elfHeaderEntry{
 	"arch": {0x04, 0x04, 1, 1},
-	"endianness": {0x05, 0x05, 1, 1},
+	"endianness": {0x05, 0x05, 1,  1},
 	"isa": {0x12, 0x12, 1, 1}, // technically this field is 2 bytes, but the 2nd byte is only used for two obscure ISAs
 	"entry point": {0x18, 0x18, 4, 8},
 	"program header table offset": {0x1c, 0x20, 4, 8},
@@ -38,8 +39,11 @@ var elfHeader = map[string]elfHeaderEntry{
 	// "section_header_table_names_index": {0x32, 0x3e, 2, 2},
 }
 
-func (e Elf) foo() {
-
+func (e *Elf) Info()  {
+	fmt.Println("  File Type: ELF")
+	fmt.Println("  Arch:", e.arch)
+	fmt.Println("  ISA:", e.isa.Name())
+	fmt.Println("  Endianness:", e.endianness)
 }
 
 func NewElf(elfContents []byte) (Executable, error) {
@@ -54,14 +58,17 @@ func NewElf(elfContents []byte) (Executable, error) {
 		return nil, err
 	}
 
-	elf := Elf{
+	elf := &Elf{
 		arch: arch,
 		endianness: endianness,
 		contents: elfContents,
 		isa: nil,
 	}
 
-	elf.setISA()
+	err = elf.setISA()
+	if err != nil {
+		return nil, err
+	}
 
 	return elf, nil
 }
@@ -127,7 +134,7 @@ func (e *Elf) headerValue(field string) uint {
 	return 0 // this will never be reached
 }
 
-func (e *Elf) setISA() (isa.ISA, error) {
+func (e *Elf) setISA() error {
 
 	// maps the value present in the elf file to an ISA
 	var supportedISAs = map[uint]isa.ISA{
@@ -137,9 +144,10 @@ func (e *Elf) setISA() (isa.ISA, error) {
 
 	isa, ok := supportedISAs[e.headerValue("isa")]
 	if ok {
-		return isa, nil
+		e.isa = isa
+		return nil
 	}
 
-	return nil, errors.New("unsupported instruction set")
+	return errors.New("unsupported instruction set")
 }
 

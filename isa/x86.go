@@ -10,3 +10,6 @@ func (X86) GadgetTerminator() string {
 	return "c3"
 }
 
+func (X86) Name() string {
+	return "x86"
+}

@@ -1,1 +1,1 @@
-// package suffixtree
+package suffixtree

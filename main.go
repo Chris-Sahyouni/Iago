@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-var CurrentFile exe.Executable
+var currentFile exe.Executable
 
 
 func main() {
@@ -54,22 +54,25 @@ func parseUserInput(line string) (string, []string, []string) {
 func executeCommand(cmd string, args []string, flags []string) {
 	switch cmd {
 	case "help":
-		Help()
+		help()
 	case "quit":
 		os.Exit(0)
 	case "load":
-		err := Load(args)
+		err := load(args)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
+		CurrentFileInfo()
+	case "stat":
+		CurrentFileInfo()
 	default:
 		fmt.Println("unrecognized command")
 	}
 
 }
 
-func Load(args []string) error {
+func load(args []string) error {
 	if len(args) == 0 {
 		return errors.New("missing 1 argument: <path>")
 	}
@@ -85,7 +88,7 @@ func Load(args []string) error {
 	exeConstructors := map[string]func([]byte) (exe.Executable, error){
 		"elf": exe.NewElf,
 	}
-	fileType, err := DetermineFileType(fileBytes)
+	fileType, err := determineFileType(fileBytes)
 	if err != nil {
 		return err
 	}
@@ -94,12 +97,12 @@ func Load(args []string) error {
 	if err != nil {
 		return err
 	}
-	CurrentFile = newExecutable
+	currentFile = newExecutable
 
 	return nil
 }
 
-func DetermineFileType(fileBytes []byte) (string, error) {
+func determineFileType(fileBytes []byte) (string, error) {
 	elfMagic := []byte{'\x7f', '\x45', '\x4c', '\x46'}
 	if bytes.Equal(fileBytes[:4], elfMagic) {
 		return "elf", nil
@@ -108,10 +111,14 @@ func DetermineFileType(fileBytes []byte) (string, error) {
 	return "", errors.New("unrecognized file format")
 }
 
+func CurrentFileInfo() {
+	currentFile.Info()
+}
 
-func Help() {
+func help() {
 	fmt.Println("Commands:")
 	fmt.Println("    exit" + strings.Repeat(" ", 16 - len("quit")) + "Exit the interactive shell")
 	fmt.Println("    help" + strings.Repeat(" ", 16 - len("help")) + "Show help")
 	fmt.Println("    load <path>" + strings.Repeat(" ", 16 - len("load <path>")) + "Sets the current file for analysis")
+	fmt.Println("    stat" + strings.Repeat(" ", 16 - len("stat")) + "View current file's metadata")
 }
