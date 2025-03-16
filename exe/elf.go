@@ -255,6 +255,7 @@ func (e *Elf) InstructionStream() []Instruction {
 		segmentContents := e.contents[segment.Offset:segment.Offset + segment.Size]
 		for i := 0; i < len(segmentContents); i += instructionSize {
 			newInstruction := Instruction{
+				// make sure this is correct for big endian programs too
 				Op: hex.EncodeToString(segmentContents[i:i+instructionSize]),
 				Vaddr: segment.VAddr + uint(i),
 			}
