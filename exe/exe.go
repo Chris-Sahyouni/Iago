@@ -6,6 +6,6 @@ import (
 
 type Executable interface {
 	Info()
-	InstructionStream() []isa.Instruction
+	InstructionStream([]segment) []isa.Instruction
 }
 

@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-var testBinaries = map[string][]byte {}
+var testBinaries = map[string][]byte{}
 
 // reads in test binaries
 func setup() {
@@ -22,7 +22,7 @@ func setup() {
 		fmt.Println("Compile the test programs before running tests")
 		os.Exit(1)
 	}
-	for _, f  := range dirEntries {
+	for _, f := range dirEntries {
 		name := f.Name()
 		fmt.Println(name)
 		fileContents, err := os.ReadFile(testPath + name)
@@ -48,9 +48,9 @@ func TestMain(m *testing.M) {
 func TestNewElf(t *testing.T) {
 	var expectedResults = map[string]struct {
 		Arch uint
-		End string
-		Isa isa.ISA
-		} {
+		End  string
+		Isa  isa.ISA
+	}{
 		"square32": {Arch: 32, End: "little", Isa: isa.X86{}},
 		"square64": {Arch: 64, End: "little", Isa: isa.X86{}},
 	}
@@ -78,11 +78,11 @@ func TestNewElf(t *testing.T) {
 // this test might fail if you recompile the test binaries
 func TestFieldValue(t *testing.T) {
 	var expectedResults = map[string]struct {
-		EntryPnt uint
-		PHdrEntrySz uint
+		EntryPnt     uint
+		PHdrEntrySz  uint
 		PHdrVirtAddr uint // of the first entry of the Program Header Table
-		Flags uint // of the first entry of the Program Header Table
-		} {
+		Flags        uint // of the first entry of the Program Header Table
+	}{
 		"square32": {EntryPnt: 0x1070, PHdrEntrySz: 32, PHdrVirtAddr: 0x34, Flags: 0x4},
 		"square64": {EntryPnt: 0x1040, PHdrEntrySz: 56, PHdrVirtAddr: 0x40, Flags: 0x4},
 	}
@@ -132,19 +132,19 @@ func TestFieldValue(t *testing.T) {
 
 func TestLocateExecutableSegments(t *testing.T) {
 
-	var expectedResults = map[string][]Segment {
+	var expectedResults = map[string][]segment{
 		"square32": {
-			Segment{
+			segment{
 				Offset: 0x1000,
-				VAddr: 0x1000,
-				Size: 0x294,
+				VAddr:  0x1000,
+				Size:   0x294,
 			},
 		},
 		"square64": {
-			Segment{
+			segment{
 				Offset: 0x1000,
-				VAddr: 0x1000,
-				Size: 0x1e5,
+				VAddr:  0x1000,
+				Size:   0x1e5,
 			},
 		},
 	}
@@ -155,11 +155,10 @@ func TestLocateExecutableSegments(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		err = elf.(*Elf).locateExecutableSegments()
+		actual, err := elf.(*Elf).locateExecutableSegments()
 		if err != nil {
 			t.Error(err)
 		}
-		actual := elf.(*Elf).ExecutableSegments
 		for i := range len(actual) {
 			if actual[i] != expected[i] {
 				t.Fail()
