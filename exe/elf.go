@@ -248,13 +248,13 @@ func (e *Elf) locateExecutableSegments() error {
 }
 
 
-func (e *Elf) InstructionStream() []Instruction {
-	var instructionStream []Instruction
+func (e *Elf) InstructionStream() []isa.Instruction {
+	var instructionStream []isa.Instruction
 	instructionSize := e.isa.InstructionSize()
 	for _, segment := range e.ExecutableSegments {
 		segmentContents := e.contents[segment.Offset:segment.Offset + segment.Size]
 		for i := 0; i < len(segmentContents); i += instructionSize {
-			newInstruction := Instruction{
+			newInstruction := isa.Instruction{
 				// make sure this is correct for big endian programs too
 				Op: hex.EncodeToString(segmentContents[i:i+instructionSize]),
 				Vaddr: segment.VAddr + uint(i),

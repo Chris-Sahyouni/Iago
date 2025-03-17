@@ -2,7 +2,6 @@ package trie
 
 import (
 	"fmt"
-	"iago/exe"
 	"iago/isa"
 	"maps"
 	"slices"
@@ -11,11 +10,11 @@ import (
 // Aho-Corasick Trie
 type TrieNode struct {
 	children    map[string]*TrieNode
-	data        exe.Instruction
+	data        isa.Instruction
 	failureLink *TrieNode
 }
 
-func Trie(inStream []exe.Instruction, isa isa.ISA) *TrieNode {
+func Trie(inStream []isa.Instruction, isa isa.ISA) *TrieNode {
 	root := buildTrie(inStream, isa)
 	root.buildFailureLinks()
 	return root
@@ -31,7 +30,7 @@ func reverse[T any](t []T) {
 	}
 }
 
-func newTrieNode(data exe.Instruction) *TrieNode {
+func newTrieNode(data isa.Instruction) *TrieNode {
 	return &TrieNode{
 		children:    map[string]*TrieNode{},
 		data:        data,
@@ -39,7 +38,7 @@ func newTrieNode(data exe.Instruction) *TrieNode {
 	}
 }
 
-func buildTrie(inStream []exe.Instruction, isa isa.ISA) *TrieNode {
+func buildTrie(inStream []isa.Instruction, isa isa.ISA) *TrieNode {
 	reverse(inStream)
 
 	fmt.Println("Should be a gadget terminator", inStream[0].Op)

@@ -1,17 +1,16 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"errors"
 	"fmt"
 	"iago/exe"
 	"os"
-	"bufio"
 	"strings"
 )
 
 var currentFile exe.Executable
-
 
 func main() {
 
@@ -117,8 +116,8 @@ func CurrentFileInfo() {
 
 func help() {
 	fmt.Println("Commands:")
-	fmt.Println("    exit" + strings.Repeat(" ", 16 - len("quit")) + "Exit the interactive shell")
-	fmt.Println("    help" + strings.Repeat(" ", 16 - len("help")) + "Show help")
-	fmt.Println("    load <path>" + strings.Repeat(" ", 16 - len("load <path>")) + "Sets the current file for analysis")
-	fmt.Println("    stat" + strings.Repeat(" ", 16 - len("stat")) + "View current file's metadata")
+	fmt.Println("    exit" + strings.Repeat(" ", 16-len("quit")) + "Exit the interactive shell")
+	fmt.Println("    help" + strings.Repeat(" ", 16-len("help")) + "Show help")
+	fmt.Println("    load <path>" + strings.Repeat(" ", 16-len("load <path>")) + "Sets the current file for analysis")
+	fmt.Println("    stat" + strings.Repeat(" ", 16-len("stat")) + "View current file's metadata")
 }

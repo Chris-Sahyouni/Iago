@@ -5,3 +5,8 @@ type ISA interface {
 	GadgetTerminator() string
 	Name() string
 }
+
+type Instruction struct {
+	Op string
+	Vaddr uint
+}

@@ -1,15 +1,11 @@
 package exe
 
+import (
+	"iago/isa"
+)
+
 type Executable interface {
 	Info()
-	InstructionStream() []Instruction
+	InstructionStream() []isa.Instruction
 }
 
-type Instruction struct {
-	Op string
-	Vaddr uint
-}
-
-// func (i Instruction) Equals(o Instruction) bool {
-// 	return i.Op == o.Op
-// }
