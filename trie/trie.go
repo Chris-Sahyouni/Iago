@@ -1,7 +1,6 @@
 package trie
 
 import (
-	"fmt"
 	"iago/isa"
 	"maps"
 	"slices"
@@ -40,8 +39,6 @@ func newTrieNode(data isa.Instruction) *TrieNode {
 
 func buildTrie(inStream []isa.Instruction, isa isa.ISA) *TrieNode {
 	reverse(inStream)
-
-	fmt.Println("Should be a gadget terminator", inStream[0].Op)
 
 	root := newTrieNode(inStream[0])
 
