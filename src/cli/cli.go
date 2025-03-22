@@ -75,7 +75,7 @@ func commandDispatch(cmdName string, args Args) (Command, error) {
 	case "stat":
 		cmd = Stat{args}
 	case "cat-target":
-		// cmd = CatTarget{args}
+		cmd = CatTarget{args}
 	case "set-target":
 		cmd = SetTarget{args}
 	default:
@@ -84,8 +84,3 @@ func commandDispatch(cmdName string, args Args) (Command, error) {
 
 	return cmd, nil
 }
-
-
-
-// type CatTarget struct{}
-// type SetTarget struct{}
