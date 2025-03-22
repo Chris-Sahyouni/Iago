@@ -74,10 +74,10 @@ func commandDispatch(cmdName string, args Args) (Command, error) {
 		cmd = Load{args}
 	case "stat":
 		cmd = Stat{args}
-	case "target":
-		// cmd = Target{Args}
+	case "cat-target":
+		// cmd = CatTarget{args}
 	case "set-target":
-		// cmd = SetTarget{Args}
+		cmd = SetTarget{args}
 	default:
 		return nil, errors.New("unrecognized command")
 	}
@@ -87,5 +87,5 @@ func commandDispatch(cmdName string, args Args) (Command, error) {
 
 
 
-// type Target struct{}
+// type CatTarget struct{}
 // type SetTarget struct{}
