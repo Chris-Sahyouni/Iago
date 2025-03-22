@@ -1,7 +1,7 @@
 package trie
 
 import (
-	"iago/isa"
+	"iago/src/isa"
 	"maps"
 	"slices"
 )

@@ -3,8 +3,8 @@ package cli
 import (
 	"bytes"
 	"errors"
-	"iago/exe"
-	"iago/global"
+	"iago/src/exe"
+	"iago/src/global"
 	"os"
 )
 

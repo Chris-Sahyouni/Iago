@@ -2,7 +2,7 @@ package cli
 
 import (
 	"errors"
-	"iago/global"
+	"iago/src/global"
 )
 
 type Stat struct{ args Args }

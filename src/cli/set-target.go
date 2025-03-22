@@ -3,7 +3,7 @@ package cli
 import (
 	"encoding/hex"
 	"fmt"
-	"iago/global"
+	"iago/src/global"
 	"os"
 )
 

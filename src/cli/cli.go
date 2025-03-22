@@ -2,7 +2,7 @@ package cli
 
 import (
 	"errors"
-	"iago/global"
+	"iago/src/global"
 	"strings"
 )
 

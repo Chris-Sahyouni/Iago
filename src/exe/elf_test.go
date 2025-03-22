@@ -3,7 +3,7 @@ package exe
 import (
 	"encoding/hex"
 	"fmt"
-	"iago/isa"
+	"iago/src/isa"
 	"os"
 	"testing"
 )

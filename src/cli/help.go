@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 	"strings"
-	"iago/global"
+	"iago/src/global"
 )
 
 type Help struct{ args Args }

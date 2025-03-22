@@ -2,7 +2,7 @@ package cli
 
 import (
 	"os"
-	"iago/global"
+	"iago/src/global"
 )
 
 type Quit struct{ args Args }

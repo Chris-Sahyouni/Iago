@@ -6,15 +6,15 @@ CC = gcc
 all: build
 
 build:
-	go build -o bin ./...
+	go build -o bin ./src/...
 
 .PHONY: run
 run:
-	go run main.go
+	go run ./src/main.go
 
 .PHONY: test
 test:
-	go test ./... -v
+	go test ./src/... -v
 
 .PHONY: clean
 clean:
