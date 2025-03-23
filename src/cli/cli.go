@@ -78,6 +78,8 @@ func commandDispatch(cmdName string, args Args) (Command, error) {
 		cmd = CatTarget{args}
 	case "set-target":
 		cmd = SetTarget{args}
+	case "rop":
+		cmd = Rop{args}
 	default:
 		return nil, errors.New("unrecognized command")
 	}

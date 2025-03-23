@@ -7,5 +7,6 @@ import (
 type Executable interface {
 	Info()
 	InstructionStream([]segment) []isa.Instruction
+	Rop() error
 }
 

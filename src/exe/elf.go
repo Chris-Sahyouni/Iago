@@ -15,7 +15,6 @@ type Elf struct {
 	isa                      isa.ISA
 	contents                 []byte
 	programHeaderTableOffset uint
-	// ExecutableSegments       []segment
 	reverseInstructionTrie *trie.TrieNode
 }
 
@@ -253,4 +252,8 @@ func (e *Elf) InstructionStream(executableSegments []segment) []isa.Instruction 
 		}
 	}
 	return instructionStream
+}
+
+func (e *Elf) Rop() error {
+	return nil
 }

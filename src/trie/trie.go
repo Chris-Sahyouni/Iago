@@ -1,6 +1,7 @@
 package trie
 
 import (
+	"errors"
 	"iago/src/isa"
 	"maps"
 	"slices"
@@ -91,4 +92,35 @@ func (root *TrieNode) buildFailureLinks() {
 func (t *TrieNode) hasChild(target string) bool {
 	childOps := slices.Collect(maps.Keys(t.children))
 	return slices.Contains(childOps, target)
+}
+
+func (t *TrieNode) Rop(target string, isa isa.ISA) ([]uint, error) {
+	reverseTargetSequence := parseTarget(target, isa.InstructionSize())
+	var vaddrs []uint // built in reverse
+	root := t
+	curr := t
+
+	for _, instr := range reverseTargetSequence {
+		if curr.hasChild(instr) {
+			curr = curr.children[instr]
+		} else { // take failure link
+			if curr == root {
+				return nil, errors.New("insufficient gadgets to build target payload")
+			}
+			vaddrs = append(vaddrs, curr.data.Vaddr)
+			curr = curr.failureLink
+		}
+	}
+
+	reverse(vaddrs)
+	return vaddrs, nil
+}
+
+func parseTarget(target string, instructionSize int) []string {
+	var splitTarget []string
+	for i := 0; i < len(target); i += instructionSize {
+		splitTarget = append(splitTarget, target[i:i+instructionSize])
+	}
+	reverse(splitTarget)
+	return splitTarget
 }
