@@ -122,3 +122,74 @@ func TestFailureLinks(t *testing.T) {
 	}
 
 }
+
+func TestRop(t *testing.T) {
+	var testInstructionStream = []isa.Instruction{
+		{Op: "i", Vaddr: 1},
+		{Op: "a", Vaddr: 2},
+		{Op: "g", Vaddr: 3},
+		{Op: "o", Vaddr: 4},
+		{Op: "z", Vaddr: 5},
+
+		{Op: "o", Vaddr: 4},
+		{Op: "t", Vaddr: 5},
+		{Op: "h", Vaddr: 6},
+		{Op: "e", Vaddr: 7},
+		{Op: "l", Vaddr: 8},
+		{Op: "l", Vaddr: 9},
+		{Op: "o", Vaddr: 10},
+		{Op: "z", Vaddr: 11},
+	}
+
+	root := buildTrie(testInstructionStream, isa.TestISA{})
+	root.buildFailureLinks()
+
+	var gAddrs []uint
+	var err error
+
+	gAddrs, err = root.Rop("iago", isa.TestISA{})
+	if err != nil {
+		t.Fail()
+	}
+	if len(gAddrs) != 1 || gAddrs[0] != 1 {
+		t.Fail()
+	}
+
+	gAddrs, err = root.Rop("othello", isa.TestISA{})
+	if err != nil {
+		t.Fail()
+	}
+	if len(gAddrs) != 1 || gAddrs[0] != 10 {
+		t.Fail()
+	}
+
+	gAddrs, err = root.Rop("iago", isa.TestISA{})
+	if err != nil {
+		t.Fail()
+	}
+	if len(gAddrs) != 1 || gAddrs[0] != 1 {
+		t.Fail()
+	}
+
+	gAddrs, err = root.Rop("go", isa.TestISA{})
+	if err != nil {
+		t.Fail()
+	}
+	if len(gAddrs) != 1 || gAddrs[0] != 3 {
+		t.Fail()
+	}
+
+	gAddrs, err = root.Rop("helloiago", isa.TestISA{})
+	if err != nil {
+		t.Fail()
+	}
+	if len(gAddrs) != 2 || gAddrs[0] != 6 || gAddrs[1] != 1 {
+		t.Fail()
+	}
+
+	gAddrs, err = root.Rop("nothello", isa.TestISA{})
+	if err == nil {
+		t.Fail()
+	}
+
+}
