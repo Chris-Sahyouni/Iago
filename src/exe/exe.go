@@ -7,6 +7,8 @@ import (
 type Executable interface {
 	Info()
 	InstructionStream([]segment) []isa.Instruction
-	Rop() error
+	Rop(string) ([]uint, error)
+	Endianness() string
+	Arch() uint
 }
 

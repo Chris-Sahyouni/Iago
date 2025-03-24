@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"encoding/binary"
 	"errors"
 	"iago/src/global"
 	"os"
@@ -42,18 +43,44 @@ func (r Rop) Execute(globalState *global.GlobalState) error {
 	if globalState.CurrentFile == nil {
 		return errors.New("no file loaded. Run load <path>")
 	}
-	if globalState.TargetPayload == struct{Title string; Contents string}{"", ""} {
+	if globalState.TargetPayload == struct {
+		Title    string
+		Contents string
+	}{"", ""} {
 		return errors.New("no target payload specified. Run set-target <path>")
 	}
 
-	outputDir, ok := r.args["-o"]
+	outName, ok := r.args["-o"]
 	if !ok {
-		outputDir = "iago_generated_payloads"
+		outName = "rop_chain"
 	}
 
-	err := os.Mkdir(outputDir, 0755)
+	outFile, err := os.OpenFile(outName, os.O_APPEND|os.O_CREATE, 0755)
 	if err != nil {
 		return err
+	}
+
+	gadgetAddrs, err := globalState.CurrentFile.Rop(globalState.TargetPayload.Contents)
+	endianness := globalState.CurrentFile.Endianness()
+	arch := globalState.CurrentFile.Arch()
+
+	var byteorder binary.ByteOrder
+	if endianness == "big" {
+		byteorder = binary.BigEndian
+	} else {
+		byteorder = binary.BigEndian
+	}
+
+	for _, gAddr := range gadgetAddrs {
+		var gAddrBytes []byte
+		if arch == 32 {
+			byteorder.PutUint32(gAddrBytes, uint32(gAddr))
+			outFile.Write(gAddrBytes)
+		}
+		if arch == 64 {
+			byteorder.PutUint64(gAddrBytes, uint64(gAddr))
+			outFile.Write(gAddrBytes)
+		}
 	}
 
 	return nil

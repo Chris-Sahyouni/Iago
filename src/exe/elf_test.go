@@ -12,7 +12,7 @@ var testBinaries = map[string][]byte{}
 
 // reads in test binaries
 func setup() {
-	testPath := "../test_programs/bin/"
+	testPath := "../../test_programs/bin/"
 	dirEntries, err := os.ReadDir(testPath)
 	if err != nil {
 		fmt.Println(err)

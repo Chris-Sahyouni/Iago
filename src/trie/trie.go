@@ -96,7 +96,7 @@ func (t *TrieNode) hasChild(target string) bool {
 
 func (t *TrieNode) Rop(target string, isa isa.ISA) ([]uint, error) {
 	reverseTargetSequence := parseTarget(target, isa.InstructionSize())
-	var vaddrs []uint // built in reverse
+	var gadgetAddrs []uint // built in reverse
 	root := t
 	curr := t
 
@@ -107,13 +107,13 @@ func (t *TrieNode) Rop(target string, isa isa.ISA) ([]uint, error) {
 			if curr == root {
 				return nil, errors.New("insufficient gadgets to build target payload")
 			}
-			vaddrs = append(vaddrs, curr.data.Vaddr)
+			gadgetAddrs = append(gadgetAddrs, curr.data.Vaddr)
 			curr = curr.failureLink
 		}
 	}
 
-	reverse(vaddrs)
-	return vaddrs, nil
+	reverse(gadgetAddrs)
+	return gadgetAddrs, nil
 }
 
 func parseTarget(target string, instructionSize int) []string {

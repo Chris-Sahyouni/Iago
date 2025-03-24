@@ -254,6 +254,14 @@ func (e *Elf) InstructionStream(executableSegments []segment) []isa.Instruction 
 	return instructionStream
 }
 
-func (e *Elf) Rop() error {
-	return nil
+func (e *Elf) Rop(target string) ([]uint, error) {
+	return e.reverseInstructionTrie.Rop(target, e.isa)
+}
+
+func (e *Elf) Endianness() string {
+	return e.endianness
+}
+
+func (e *Elf) Arch() uint {
+	return e.arch
 }
