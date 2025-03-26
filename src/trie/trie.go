@@ -95,14 +95,21 @@ func (t *TrieNode) hasChild(target string) bool {
 }
 
 func (t *TrieNode) Rop(target string, isa isa.ISA) ([]uint, error) {
-	reverseTargetSequence := parseTarget(target, isa.InstructionSize())
+	reverseTargetSequence, err := parseTarget(target, isa.InstructionSize())
+	if err != nil {
+		return nil, err
+	}
 	var gadgetAddrs []uint // built in reverse
 	root := t
 	curr := t
 
-	for _, instr := range reverseTargetSequence {
+	var instr string
+	i := 0
+	for i < len(target) {
+		instr = reverseTargetSequence[i]
 		if curr.hasChild(instr) {
 			curr = curr.children[instr]
+			i++
 		} else { // take failure link
 			if curr == root {
 				return nil, errors.New("insufficient gadgets to build target payload")
@@ -111,16 +118,22 @@ func (t *TrieNode) Rop(target string, isa isa.ISA) ([]uint, error) {
 			curr = curr.failureLink
 		}
 	}
+	gadgetAddrs = append(gadgetAddrs, curr.data.Vaddr)
 
 	reverse(gadgetAddrs)
 	return gadgetAddrs, nil
 }
 
-func parseTarget(target string, instructionSize int) []string {
+func parseTarget(target string, instructionSize int) ([]string, error) {
+
+	if len(target) % instructionSize != 0 {
+		return nil, errors.New("malformed target: target length modulo instruction size not equal to 0")
+	}
+
 	var splitTarget []string
 	for i := 0; i < len(target); i += instructionSize {
 		splitTarget = append(splitTarget, target[i:i+instructionSize])
 	}
 	reverse(splitTarget)
-	return splitTarget
+	return splitTarget, nil
 }
