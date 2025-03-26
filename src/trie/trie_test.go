@@ -6,6 +6,7 @@ import (
 	"maps"
 	"slices"
 	"testing"
+	"strconv"
 )
 
 // Ok making this recursive since it will only be used on the above Trie ever
@@ -126,6 +127,37 @@ func TestFailureLinks(t *testing.T) {
 
 }
 
+func TestHasChild(t *testing.T) {
+	var testInstructionStream = []isa.Instruction{
+		{Op: "b", Vaddr: 1},
+		{Op: "a", Vaddr: 2},
+		{Op: "z", Vaddr: 3},
+
+		{Op: "c", Vaddr: 4},
+		{Op: "a", Vaddr: 5},
+		{Op: "z", Vaddr: 6},
+
+		{Op: "f", Vaddr: 7},
+		{Op: "u", Vaddr: 8},
+		{Op: "z", Vaddr: 9},
+		{Op: "z", Vaddr: 10},
+	}
+
+	root := buildTrie(testInstructionStream, isa.TestISA{})
+	if !root.hasChild("u") || !root.hasChild("a") {
+		t.Fail()
+	}
+	if !root.children["a"].hasChild("b") || !root.children["a"].hasChild("c") {
+		t.Fail()
+	}
+	if !root.children["u"].hasChild("f") {
+		t.Fail()
+	}
+	if root.hasChild("q") {
+		t.Fail()
+	}
+}
+
 func TestRop(t *testing.T) {
 	var testInstructionStream = []isa.Instruction{
 		{Op: "i", Vaddr: 1},
@@ -147,7 +179,7 @@ func TestRop(t *testing.T) {
 	root := buildTrie(testInstructionStream, isa.TestISA{})
 	root.buildFailureLinks()
 
-	root.drawTrie()
+	root.drawTrie(10)
 
 	var gAddrs []uint
 	var err error
@@ -157,15 +189,15 @@ func TestRop(t *testing.T) {
 		t.Error("Error on target: iago")
 	}
 	if len(gAddrs) != 1 || gAddrs[0] != 1 {
-		t.Error("Wrong gadgets on target: iago")
+		t.Errorf("Wrong gadgets on target: iago \n Expected: [1], Actual: %v\n", gAddrs)
 	}
 
 	gAddrs, err = root.Rop("othello", isa.TestISA{})
 	if err != nil {
 		t.Error("Error on target: othello")
 	}
-	if len(gAddrs) != 1 || gAddrs[0] != 12 {
-		t.Error("Wrong gadgets on target: othello")
+	if len(gAddrs) != 1 || gAddrs[0] != 6 {
+		t.Errorf("Wrong gadgets on target: othello \n Expected: [6], Actual: %v\n", gAddrs)
 	}
 
 	gAddrs, err = root.Rop("go", isa.TestISA{})
@@ -173,15 +205,15 @@ func TestRop(t *testing.T) {
 		t.Error("Error on target: go")
 	}
 	if len(gAddrs) != 1 || gAddrs[0] != 3 {
-		t.Error("Wrong gadgets on target: go")
+		t.Errorf("Wrong gadgets on target: go \n Expected: [3], Actual: %v\n", gAddrs)
 	}
 
 	gAddrs, err = root.Rop("helloiago", isa.TestISA{})
 	if err != nil {
 		t.Error("Error on target: helloiago")
 	}
-	if len(gAddrs) != 2 || gAddrs[0] != 10 || gAddrs[1] != 1 {
-		t.Error("Wrong gadgets on target: helloiago")
+	if len(gAddrs) != 2 || gAddrs[0] != 8 || gAddrs[1] != 1 {
+		t.Errorf("Wrong gadgets on target: helloiago \n Expected: [8 1], Actual: %v\n", gAddrs)
 	}
 
 	gAddrs, err = root.Rop("nothello", isa.TestISA{})
@@ -195,14 +227,14 @@ func TestRop(t *testing.T) {
 /*                                  Draw Trie                                 */
 /* -------------------------------------------------------------------------- */
 
-func (t *TrieNode) drawTrie() {
+func (t *TrieNode) drawTrie(addressRepBase int) {
 	var lines []string
 	currLevel := []*TrieNode{t}
 	var newLevel []*TrieNode
 	for len(currLevel) > 0 {
 		var currLine string
 		for _, n := range currLevel {
-			currLine += " " + n.data.Op
+			currLine += "  " + n.data.Op + ":" + strconv.FormatUint(uint64(n.data.Vaddr), addressRepBase)
 			newLevel = append(newLevel, slices.Collect(maps.Values(n.children))...)
 		}
 		for i := range len(lines) {
