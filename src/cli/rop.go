@@ -59,6 +59,7 @@ func (r Rop) Execute(globalState *global.GlobalState) error {
 	if err != nil {
 		return err
 	}
+	defer outFile.Close()
 
 	gadgetAddrs, err := globalState.CurrentFile.Rop(globalState.TargetPayload.Contents)
 	endianness := globalState.CurrentFile.Endianness()

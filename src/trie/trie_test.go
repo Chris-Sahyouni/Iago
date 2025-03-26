@@ -1,7 +1,10 @@
 package trie
 
 import (
+	"fmt"
 	"iago/src/isa"
+	"maps"
+	"slices"
 	"testing"
 )
 
@@ -131,65 +134,85 @@ func TestRop(t *testing.T) {
 		{Op: "o", Vaddr: 4},
 		{Op: "z", Vaddr: 5},
 
-		{Op: "o", Vaddr: 4},
-		{Op: "t", Vaddr: 5},
-		{Op: "h", Vaddr: 6},
-		{Op: "e", Vaddr: 7},
-		{Op: "l", Vaddr: 8},
-		{Op: "l", Vaddr: 9},
-		{Op: "o", Vaddr: 10},
-		{Op: "z", Vaddr: 11},
+		{Op: "o", Vaddr: 6},
+		{Op: "t", Vaddr: 7},
+		{Op: "h", Vaddr: 8},
+		{Op: "e", Vaddr: 9},
+		{Op: "l", Vaddr: 10},
+		{Op: "l", Vaddr: 11},
+		{Op: "o", Vaddr: 12},
+		{Op: "z", Vaddr: 13},
 	}
 
 	root := buildTrie(testInstructionStream, isa.TestISA{})
 	root.buildFailureLinks()
+
+	root.drawTrie()
 
 	var gAddrs []uint
 	var err error
 
 	gAddrs, err = root.Rop("iago", isa.TestISA{})
 	if err != nil {
-		t.Fail()
+		t.Error("Error on target: iago")
 	}
 	if len(gAddrs) != 1 || gAddrs[0] != 1 {
-		t.Fail()
+		t.Error("Wrong gadgets on target: iago")
 	}
 
 	gAddrs, err = root.Rop("othello", isa.TestISA{})
 	if err != nil {
-		t.Fail()
+		t.Error("Error on target: othello")
 	}
-	if len(gAddrs) != 1 || gAddrs[0] != 10 {
-		t.Fail()
-	}
-
-	gAddrs, err = root.Rop("iago", isa.TestISA{})
-	if err != nil {
-		t.Fail()
-	}
-	if len(gAddrs) != 1 || gAddrs[0] != 1 {
-		t.Fail()
+	if len(gAddrs) != 1 || gAddrs[0] != 12 {
+		t.Error("Wrong gadgets on target: othello")
 	}
 
 	gAddrs, err = root.Rop("go", isa.TestISA{})
 	if err != nil {
-		t.Fail()
+		t.Error("Error on target: go")
 	}
 	if len(gAddrs) != 1 || gAddrs[0] != 3 {
-		t.Fail()
+		t.Error("Wrong gadgets on target: go")
 	}
 
 	gAddrs, err = root.Rop("helloiago", isa.TestISA{})
 	if err != nil {
-		t.Fail()
+		t.Error("Error on target: helloiago")
 	}
-	if len(gAddrs) != 2 || gAddrs[0] != 6 || gAddrs[1] != 1 {
-		t.Fail()
+	if len(gAddrs) != 2 || gAddrs[0] != 10 || gAddrs[1] != 1 {
+		t.Error("Wrong gadgets on target: helloiago")
 	}
 
 	gAddrs, err = root.Rop("nothello", isa.TestISA{})
 	if err == nil {
-		t.Fail()
+		t.Error("Did not error on target: nothello")
 	}
 
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                  Draw Trie                                 */
+/* -------------------------------------------------------------------------- */
+
+func (t *TrieNode) drawTrie() {
+	var lines []string
+	currLevel := []*TrieNode{t}
+	var newLevel []*TrieNode
+	for len(currLevel) > 0 {
+		var currLine string
+		for _, n := range currLevel {
+			currLine += " " + n.data.Op
+			newLevel = append(newLevel, slices.Collect(maps.Values(n.children))...)
+		}
+		for i := range len(lines) {
+			lines[i] = "  " + lines[i]
+		}
+		lines = append(lines, currLine)
+		currLevel = newLevel
+		newLevel = make([]*TrieNode, 0)
+	}
+	for _, l := range lines {
+		fmt.Println(l)
+	}
 }
