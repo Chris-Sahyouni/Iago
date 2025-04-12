@@ -28,3 +28,5 @@ clean_binaries:
 binaries:
 	$(CC) -o test_programs/bin/square64 test_programs/square.c
 	$(CC) -o test_programs/bin/square32 test_programs/square.c -m32
+	$(CC) -o test_programs/bin/vuln64 test_programs/vuln.c
+	$(CC) -o test_programs/bin/vuln32 test_programs/vuln.c -m32

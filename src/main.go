@@ -16,7 +16,7 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 	globalState := global.GlobalState{
 		CurrentFile: nil,
-		TargetPayload: struct {
+		CurrentTarget: struct {
 			Title    string
 			Contents string
 		}{

@@ -43,7 +43,7 @@ func (r Rop) Execute(globalState *global.GlobalState) error {
 	if globalState.CurrentFile == nil {
 		return errors.New("no file loaded. Run load <path>")
 	}
-	if globalState.TargetPayload == struct {
+	if globalState.CurrentTarget == struct {
 		Title    string
 		Contents string
 	}{"", ""} {
@@ -61,7 +61,7 @@ func (r Rop) Execute(globalState *global.GlobalState) error {
 	}
 	defer outFile.Close()
 
-	gadgetAddrs, err := globalState.CurrentFile.Rop(globalState.TargetPayload.Contents)
+	gadgetAddrs, err := globalState.CurrentFile.Rop(globalState.CurrentTarget.Contents)
 	endianness := globalState.CurrentFile.Endianness()
 	arch := globalState.CurrentFile.Arch()
 

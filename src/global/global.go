@@ -6,8 +6,11 @@ import (
 
 type GlobalState struct {
 	CurrentFile   exe.Executable
-	TargetPayload struct {
+	CurrentTarget struct {
 		Title    string
+		Contents string
+	}
+	CurrentPayload struct {
 		Contents string
 	}
 }

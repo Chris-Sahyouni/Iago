@@ -2,7 +2,6 @@
 #include <stdlib.h>
 
 void main(int argc, char* argv[]) {
-    // needs gadgets
 
     if (argc != 2) {
         printf("Usage: <Buffer contents> <pointer value>");

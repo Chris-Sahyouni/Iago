@@ -7,12 +7,12 @@ import (
 	"os"
 )
 
-type SetTarget struct{ args Args }
+type SetPayload struct{ args Args }
 
-func (s SetTarget) ValidArgs() bool {
+func (s SetPayload) ValidArgs() bool {
 	if len(s.args) == 0 {
-		// will open interactive editor in this case
 		return true
+		// will open interactive editor in this case
 	}
 	if len(s.args) == 1 {
 		_, ok := s.args["default"]
@@ -21,7 +21,7 @@ func (s SetTarget) ValidArgs() bool {
 	return false
 }
 
-func (s SetTarget) Execute(globalState *global.GlobalState) error {
+func (s SetPayload) Execute(globalState *global.GlobalState) error {
 	if len(s.args) == 0 {
 		fmt.Println("Would open interactive editor in this case")
 		return nil
@@ -34,8 +34,7 @@ func (s SetTarget) Execute(globalState *global.GlobalState) error {
 	}
 
 	contentString := hex.EncodeToString(contents)
-	globalState.CurrentTarget.Title = file
-	globalState.CurrentTarget.Contents = contentString
+	globalState.CurrentPayload.Contents = contentString
 
 	return nil
 }

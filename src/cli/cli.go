@@ -78,6 +78,10 @@ func commandDispatch(cmdName string, args Args) (Command, error) {
 		cmd = CatTarget{args}
 	case "set-target":
 		cmd = SetTarget{args}
+	case "cat-payload":
+		cmd = CatPayload{args}
+	case "set-payload":
+		cmd = SetPayload{args}
 	case "rop":
 		cmd = Rop{args}
 	default:
