@@ -11,6 +11,7 @@ type GlobalState struct {
 		Contents string
 	}
 	CurrentPayload struct {
-		Contents string
+		PaddingLength int
+		Chain []uint
 	}
 }

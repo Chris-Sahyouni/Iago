@@ -13,11 +13,13 @@ func (s SetTarget) ValidArgs() bool {
 	// 	// will open interactive editor in this case
 	// 	return true
 	// }
-	if len(s.args) == 1 {
-		_, ok := s.args["default"]
-		return ok
+
+	if len(s.args) != 1 {
+		return false
 	}
-	return false
+
+	_, ok := s.args["default"]
+	return ok
 }
 
 func (s SetTarget) Execute(globalState *global.GlobalState) error {

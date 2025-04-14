@@ -13,6 +13,7 @@ type Command interface {
 
 type Args = map[string]string
 
+
 /*
 For this project any flags (anything beginning with - or --) take an argument directly following it.
 Any non-flag argument is considered the commands singular default argument (i.e <path> in load <path>)
@@ -84,6 +85,8 @@ func commandDispatch(cmdName string, args Args) (Command, error) {
 		cmd = SetPayload{args}
 	case "rop":
 		cmd = Rop{args}
+	case "pad":
+		cmd = Pad{args}
 	default:
 		return nil, errors.New("unrecognized command")
 	}

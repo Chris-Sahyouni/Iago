@@ -65,6 +65,12 @@ func (r Rop) Execute(globalState *global.GlobalState) error {
 	endianness := globalState.CurrentFile.Endianness()
 	arch := globalState.CurrentFile.Arch()
 
+	WriteChainToFile(gadgetAddrs, arch, endianness, outFile)
+
+	return nil
+}
+
+func WriteChainToFile(chain []uint, arch uint, endianness string, outFile *os.File) {
 	var byteorder binary.ByteOrder
 	if endianness == "big" {
 		byteorder = binary.BigEndian
@@ -72,7 +78,7 @@ func (r Rop) Execute(globalState *global.GlobalState) error {
 		byteorder = binary.BigEndian
 	}
 
-	for _, gAddr := range gadgetAddrs {
+	for _, gAddr := range chain {
 		var gAddrBytes []byte
 		if arch == 32 {
 			byteorder.PutUint32(gAddrBytes, uint32(gAddr))
@@ -83,6 +89,4 @@ func (r Rop) Execute(globalState *global.GlobalState) error {
 			outFile.Write(gAddrBytes)
 		}
 	}
-
-	return nil
 }
