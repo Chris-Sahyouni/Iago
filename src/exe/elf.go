@@ -87,8 +87,6 @@ func NewElf(elfContents []byte) (Executable, error) {
 		return nil, err
 	}
 
-	// fmt.Println(executableSegments)
-
 	instructionStream := elf.InstructionStream(executableSegments)
 
 	if len(instructionStream) == 0 {
@@ -104,7 +102,7 @@ func elfArch(elfContents []byte) (uint, error) {
 	archOffset := 4
 
 	if len(elfContents) < archOffset {
-		return 0, errors.New("invalid ELF file")
+		return 0, errors.New("invalid ELF file: file size less than offset to arch field")
 	}
 
 	if elfContents[archOffset] == 1 {
@@ -112,7 +110,7 @@ func elfArch(elfContents []byte) (uint, error) {
 	} else if elfContents[archOffset] == 2 {
 		return 64, nil
 	} else {
-		return 0, errors.New("invalid ELF file")
+		return 0, errors.New("invalid ELF file: arch field not 32 or 64")
 	}
 }
 
@@ -120,7 +118,7 @@ func elfEndianness(elfContents []byte) (string, error) {
 	endiannessOffset := 5
 
 	if len(elfContents) < endiannessOffset {
-		return "", errors.New("invalid ELF file")
+		return "", errors.New("invalid ELF file: file size less than offset to endianness field")
 	}
 
 	if elfContents[endiannessOffset] == 1 {
@@ -128,7 +126,7 @@ func elfEndianness(elfContents []byte) (string, error) {
 	} else if elfContents[endiannessOffset] == 2 {
 		return "big", nil
 	} else {
-		return "", errors.New("invalid ELF file")
+		return "", errors.New("invalid ELF file: endianness field not \"little\" or \"big\"")
 	}
 }
 
@@ -148,7 +146,7 @@ func (e *Elf) fieldValue(field string, targetHeader map[string]elfField, baseOff
 	offset += baseOffset
 
 	if len(e.contents) < int(offset+size) {
-		return 0, errors.New("value offset outside file bounds")
+		return 0, errors.New("invalid ELF file: value offset outside file bounds")
 	}
 
 	value := e.contents[offset : offset+size]
@@ -173,7 +171,7 @@ func (e *Elf) fieldValue(field string, targetHeader map[string]elfField, baseOff
 		return uint(byteOrder.Uint64(value)), nil
 	}
 
-	return 0, nil // this will never be reached
+	return 0, nil // never reached
 }
 
 func (e *Elf) setISA() error {
@@ -195,7 +193,8 @@ func (e *Elf) setISA() error {
 		return nil
 	}
 
-	return errors.New("unsupported instruction set")
+	// isa not supported
+	return errors.ErrUnsupported
 }
 
 func (e *Elf) locateExecutableSegments() ([]segment, error) {
@@ -213,14 +212,20 @@ func (e *Elf) locateExecutableSegments() ([]segment, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	if numEntries == 0 {
+		return nil, errors.New("invalid ELF file: empty program header table")
+	}
+
 	for i := range numEntries {
 		entryOffset := programHeaderTableOffset + (i * programHeaderTableEntrySize)
 		flags, err := e.fieldValue("flags", programHeaderEntry, entryOffset)
 		if err != nil {
 			return nil, err
 		}
-		var executableFlag uint = 0x1
-		if flags == executableFlag {
+
+		var executableFlagMask uint = 0x1
+		if flags & executableFlagMask > 0 {
 			segmentOffset, err := e.fieldValue("segment offset", programHeaderEntry, entryOffset)
 			if err != nil {
 				return nil, err

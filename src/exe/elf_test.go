@@ -16,30 +16,35 @@ func setup() {
 	testPath := "../../test_programs/bin/"
 	dirEntries, err := os.ReadDir(testPath)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Elf Tests Setup:", err)
 		os.Exit(1)
 	}
 	if len(dirEntries) == 0 {
-		fmt.Println("Compile the test programs before running tests")
+		fmt.Println("Elf Tests Setup:", "compile the test programs before running tests")
 		os.Exit(1)
 	}
 	for _, f := range dirEntries {
 		name := f.Name()
-		fmt.Println(name)
+		fmt.Println("Elf Tests Setup:", "loading test binary", name)
 		fileContents, err := os.ReadFile(testPath + name)
 		if err != nil {
-			fmt.Println("Error reading test binary")
+			fmt.Println("Elf Tests Setup:", "error reading test binary")
 			os.Exit(1)
 		}
 		testBinaries[name] = fileContents
 	}
-	// added in error case
+
 	corruptFile, err := hex.DecodeString("df118e9f9cc24bd9a1c989d57fc28976568d1f49b2e19352f81d48ef1b41f2595e1b6ec3e7553deb680d76b3aeb7e7faa576baec526553be4bc5c1c5900c2450851151ddef4031d69a30843750753215ec22a811fe02e73fee80df7db60d0bff6d80f43ac3d2116fc230f59e8d463f66f7442bc85f2a717f92b4c6ab6db347e3")
 	if err != nil {
-		fmt.Println("Error decoding hex string")
+		fmt.Println("Elf Tests Setup:", "error decoding hex string for corrupt file")
 		os.Exit(1)
 	}
 	testBinaries["corrupt"] = corruptFile
+
+	fmt.Println("Elf Tests Setup: results")
+	for name, contents := range testBinaries {
+		fmt.Println("  ", name, "file size:", len(contents))
+	}
 }
 
 func TestMain(m *testing.M) {
@@ -59,6 +64,9 @@ func TestNewElf(t *testing.T) {
 	for name, contents := range testBinaries {
 		expected := expectedResults[name]
 		actual, err := NewElf(contents)
+		if err != nil {
+			t.Error(err)
+		}
 		if name == "corrupt" {
 			if err == nil {
 				t.Error("Should have failed on corrupt file")
