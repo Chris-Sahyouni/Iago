@@ -44,6 +44,7 @@ func setup() {
 
 func TestMain(m *testing.M) {
 	setup()
+	m.Run()
 }
 
 func TestNewElf(t *testing.T) {
@@ -160,6 +161,9 @@ func TestLocateExecutableSegments(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
+
+		t.Log(actual)
+
 		for i := range len(actual) {
 			if actual[i] != expected[i] {
 				t.Fail()
