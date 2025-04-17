@@ -86,7 +86,15 @@ func NewElf(elfContents []byte) (Executable, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// fmt.Println(executableSegments)
+
 	instructionStream := elf.InstructionStream(executableSegments)
+
+	if len(instructionStream) == 0 {
+		return nil, errors.New("no executable segments found")
+	}
+
 	elf.reverseInstructionTrie = trie.Trie(instructionStream, elf.isa)
 
 	return elf, nil

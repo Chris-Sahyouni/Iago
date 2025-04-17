@@ -6,7 +6,7 @@ CC = gcc
 all: build
 
 build:
-	go build -o bin ./src/...
+	go build -o bin/iago ./src/main.go
 
 .PHONY: run
 run:

@@ -6,6 +6,7 @@ import (
 	"iago/src/isa"
 	"os"
 	"testing"
+	"reflect"
 )
 
 var testBinaries = map[string][]byte{}
@@ -165,4 +166,62 @@ func TestLocateExecutableSegments(t *testing.T) {
 			}
 		}
 	}
+}
+
+func TestInstructionStream(t *testing.T) {
+
+	testContents := []byte("abcdefz")
+
+	testElf := Elf{
+		arch: 0,
+		endianness: "little",
+		isa: isa.TestISA{},
+		contents: testContents,
+		programHeaderTableOffset: 0,
+		reverseInstructionTrie: nil,
+	}
+
+	testSegments := []segment{
+		{ // a,b,c
+			VAddr: 0,
+			Offset: 0,
+			Size: 3,
+		},
+		{ // d
+			VAddr: 20,
+			Offset: 3,
+			Size: 1,
+		},
+		{ // empty
+			VAddr: 30,
+			Offset: 5,
+			Size: 0,
+		},
+	}
+
+	expected := []isa.Instruction{
+		{
+			Vaddr: 0,
+			Op: "a",
+		},
+		{
+			Vaddr: 1,
+			Op: "b",
+		},
+		{
+			Vaddr: 2,
+			Op: "c",
+		},
+		{
+			Vaddr: 3,
+			Op: "d",
+		},
+	}
+
+	actual := testElf.InstructionStream(testSegments)
+
+	if !reflect.DeepEqual(actual, expected) {
+		t.Fail()
+	}
+
 }

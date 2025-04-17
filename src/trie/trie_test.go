@@ -217,29 +217,29 @@ func TestRop(t *testing.T) {
 	var gAddrs []uint
 	var err error
 
-	// gAddrs, err = root.Rop("iago", isa.TestISA{})
-	// if err != nil {
-	// 	t.Errorf("Error on target iago: %s", err)
-	// }
-	// if len(gAddrs) != 1 || gAddrs[0] != 1 {
-	// 	t.Errorf("Wrong gadgets on target: iago \n Expected: [1], Actual: %v\n", gAddrs)
-	// }
+	gAddrs, err = root.Rop("iago", isa.TestISA{})
+	if err != nil {
+		t.Errorf("Error on target iago: %s", err)
+	}
+	if len(gAddrs) != 1 || gAddrs[0] != 1 {
+		t.Errorf("Wrong gadgets on target: iago \n Expected: [1], Actual: %v\n", gAddrs)
+	}
 
-	// gAddrs, err = root.Rop("othello", isa.TestISA{})
-	// if err != nil {
-	// 	t.Errorf("Error on target othello: %s", err)
-	// }
-	// if len(gAddrs) != 1 || gAddrs[0] != 6 {
-	// 	t.Errorf("Wrong gadgets on target: othello \n Expected: [6], Actual: %v\n", gAddrs)
-	// }
+	gAddrs, err = root.Rop("othello", isa.TestISA{})
+	if err != nil {
+		t.Errorf("Error on target othello: %s", err)
+	}
+	if len(gAddrs) != 1 || gAddrs[0] != 6 {
+		t.Errorf("Wrong gadgets on target: othello \n Expected: [6], Actual: %v\n", gAddrs)
+	}
 
-	// gAddrs, err = root.Rop("go", isa.TestISA{})
-	// if err != nil {
-	// 	t.Errorf("Error on target go: %s", err)
-	// }
-	// if len(gAddrs) != 1 || gAddrs[0] != 3 {
-	// 	t.Errorf("Wrong gadgets on target: go \n Expected: [3], Actual: %v\n", gAddrs)
-	// }
+	gAddrs, err = root.Rop("go", isa.TestISA{})
+	if err != nil {
+		t.Errorf("Error on target go: %s", err)
+	}
+	if len(gAddrs) != 1 || gAddrs[0] != 3 {
+		t.Errorf("Wrong gadgets on target: go \n Expected: [3], Actual: %v\n", gAddrs)
+	}
 
 	gAddrs, err = root.Rop("helloiago", isa.TestISA{})
 	if err != nil {
@@ -249,10 +249,10 @@ func TestRop(t *testing.T) {
 		t.Errorf("Wrong gadgets on target: helloiago \n Expected: [8 1], Actual: %v\n", gAddrs)
 	}
 
-	// gAddrs, err = root.Rop("nothello", isa.TestISA{})
-	// if err == nil {
-	// 	t.Error("No error on target: nothello")
-	// }
+	gAddrs, err = root.Rop("nothello", isa.TestISA{})
+	if err == nil {
+		t.Error("No error on target: nothello")
+	}
 
 }
 
