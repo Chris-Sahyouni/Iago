@@ -99,7 +99,7 @@ func NewElf(elfContents []byte) (Executable, error) {
 }
 
 func elfArch(elfContents []byte) (uint, error) {
-	archOffset := 4
+	archOffset := 0x04
 
 	if len(elfContents) < archOffset {
 		return 0, errors.New("invalid ELF file: file size less than offset to arch field")
@@ -115,7 +115,7 @@ func elfArch(elfContents []byte) (uint, error) {
 }
 
 func elfEndianness(elfContents []byte) (string, error) {
-	endiannessOffset := 5
+	endiannessOffset := 0x05
 
 	if len(elfContents) < endiannessOffset {
 		return "", errors.New("invalid ELF file: file size less than offset to endianness field")

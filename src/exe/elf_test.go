@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"iago/src/isa"
 	"os"
-	"testing"
 	"reflect"
+	"slices"
+	"testing"
 )
 
 var testBinaries = map[string][]byte{}
@@ -60,27 +61,28 @@ func TestNewElf(t *testing.T) {
 	}{
 		"square32": {Arch: 32, End: "little", Isa: isa.X86{}},
 		"square64": {Arch: 64, End: "little", Isa: isa.X86{}},
+		"vuln32": {Arch: 32, End: "little", Isa: isa.X86{}},
+		"vuln64": {Arch: 64, End: "little", Isa: isa.X86{}},
 	}
 	for name, contents := range testBinaries {
 		expected := expectedResults[name]
 		actual, err := NewElf(contents)
-		if err != nil {
-			t.Error(err)
-		}
+
 		if name == "corrupt" {
 			if err == nil {
 				t.Error("Should have failed on corrupt file")
 			}
-		} else {
-			if actual.(*Elf).arch != expected.Arch {
-				t.Fail()
-			}
-			if actual.(*Elf).endianness != expected.End {
-				t.Fail()
-			}
-			if actual.(*Elf).isa != expected.Isa {
-				t.Fail()
-			}
+			continue
+		}
+		if actual.Arch() != expected.Arch {
+			t.Errorf("On file %s, expected arch %d but got %d", name, expected.Arch, actual.Arch())
+		}
+		if actual.Endianness() != expected.End {
+			t.Errorf("On file %s, expected endianness %s but got %s", name, expected.End, actual.Endianness())
+
+		}
+		if actual.(*Elf).isa != expected.Isa {
+			t.Errorf("On file %s, expected isa %s but got %s", name, expected.Isa, actual.(*Elf).isa)
 		}
 	}
 }
@@ -96,15 +98,22 @@ func TestFieldValue(t *testing.T) {
 		"square32": {EntryPnt: 0x1070, PHdrEntrySz: 32, PHdrVirtAddr: 0x34, Flags: 0x4},
 		"square64": {EntryPnt: 0x1040, PHdrEntrySz: 56, PHdrVirtAddr: 0x40, Flags: 0x4},
 	}
+
+	skip := []string{"corrupt", "vuln32", "vuln64"}
+
 	for name, contents := range testBinaries {
+
+		if slices.Contains(skip, name) {
+			continue
+		}
+
 		expected := expectedResults[name]
 		elf, err := NewElf(contents)
+
 		if err != nil {
 			t.Error(err)
 		}
-		if name == "corrupt" {
-			continue
-		}
+
 		value, err := elf.(*Elf).fieldValue("entry point", elfHeader, 0)
 		if err != nil {
 			t.Error(err)
@@ -159,9 +168,17 @@ func TestLocateExecutableSegments(t *testing.T) {
 		},
 	}
 
+	skip := []string{"corrupt", "vuln32", "vuln64"}
+
 	for name, contents := range testBinaries {
+
+		if slices.Contains(skip, name) {
+			continue
+		}
+
 		expected := expectedResults[name]
 		elf, err := NewElf(contents)
+
 		if err != nil {
 			t.Error(err)
 		}
@@ -214,26 +231,26 @@ func TestInstructionStream(t *testing.T) {
 	expected := []isa.Instruction{
 		{
 			Vaddr: 0,
-			Op: "a",
+			Op: hex.EncodeToString([]byte("a")),
 		},
 		{
 			Vaddr: 1,
-			Op: "b",
+			Op: hex.EncodeToString([]byte("b")),
 		},
 		{
 			Vaddr: 2,
-			Op: "c",
+			Op: hex.EncodeToString([]byte("c")),
 		},
 		{
-			Vaddr: 3,
-			Op: "d",
+			Vaddr: 20,
+			Op: hex.EncodeToString([]byte("d")),
 		},
 	}
 
 	actual := testElf.InstructionStream(testSegments)
 
 	if !reflect.DeepEqual(actual, expected) {
-		t.Fail()
+		t.Errorf("Expected instruction stream %v\n got %v\n", expected, actual)
 	}
 
 }
