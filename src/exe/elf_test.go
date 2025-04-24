@@ -254,3 +254,12 @@ func TestInstructionStream(t *testing.T) {
 	}
 
 }
+
+// func TestVisualizeReverseInstructionTrie(t *testing.T) {
+// 	exe, err := NewElf(testBinaries["square32"])
+// 	if err != nil {
+// 		t.Error()
+// 	}
+// 	elf := exe.(*Elf)
+// 	elf.reverseInstructionTrie.DrawTrie(16)
+// }

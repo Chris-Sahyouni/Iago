@@ -5,6 +5,8 @@ import (
 	"iago/src/isa"
 	"maps"
 	"slices"
+	"fmt"
+	"strconv"
 )
 
 // Aho-Corasick Trie
@@ -136,4 +138,26 @@ func parseTarget(target string, instructionSize int) ([]string, error) {
 	}
 	reverse(splitTarget)
 	return splitTarget, nil
+}
+
+func (t *TrieNode) DrawTrie(addressRepBase int) {
+	var lines []string
+	currLevel := []*TrieNode{t}
+	var newLevel []*TrieNode
+	for len(currLevel) > 0 {
+		var currLine string
+		for _, n := range currLevel {
+			currLine += "  " + n.data.Op + ":" + strconv.FormatUint(uint64(n.data.Vaddr), addressRepBase)
+			newLevel = append(newLevel, slices.Collect(maps.Values(n.children))...)
+		}
+		for i := range len(lines) {
+			lines[i] = "  " + lines[i]
+		}
+		lines = append(lines, currLine)
+		currLevel = newLevel
+		newLevel = make([]*TrieNode, 0)
+	}
+	for _, l := range lines {
+		fmt.Println(l)
+	}
 }

@@ -1,12 +1,12 @@
 package trie
 
 import (
-	"fmt"
+	// "fmt"
 	"iago/src/isa"
-	"maps"
+	// "maps"
 	"reflect"
-	"slices"
-	"strconv"
+	// "slices"
+	// "strconv"
 	"testing"
 )
 
@@ -212,7 +212,7 @@ func TestRop(t *testing.T) {
 	root := buildTrie(testInstructionStream, isa.TestISA{})
 	root.buildFailureLinks()
 
-	root.drawTrie(10)
+	root.DrawTrie(10)
 
 	var gAddrs []uint
 	var err error
@@ -254,30 +254,4 @@ func TestRop(t *testing.T) {
 		t.Error("No error on target: nothello")
 	}
 
-}
-
-/* -------------------------------------------------------------------------- */
-/*                                  Draw Trie                                 */
-/* -------------------------------------------------------------------------- */
-
-func (t *TrieNode) drawTrie(addressRepBase int) {
-	var lines []string
-	currLevel := []*TrieNode{t}
-	var newLevel []*TrieNode
-	for len(currLevel) > 0 {
-		var currLine string
-		for _, n := range currLevel {
-			currLine += "  " + n.data.Op + ":" + strconv.FormatUint(uint64(n.data.Vaddr), addressRepBase)
-			newLevel = append(newLevel, slices.Collect(maps.Values(n.children))...)
-		}
-		for i := range len(lines) {
-			lines[i] = "  " + lines[i]
-		}
-		lines = append(lines, currLine)
-		currLevel = newLevel
-		newLevel = make([]*TrieNode, 0)
-	}
-	for _, l := range lines {
-		fmt.Println(l)
-	}
 }
