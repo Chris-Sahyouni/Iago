@@ -107,7 +107,7 @@ func (t *TrieNode) Rop(target string, isa isa.ISA) ([]uint, error) {
 
 	var instr string
 	i := 0
-	for i < len(target) {
+	for i < len(reverseTargetSequence) {
 		instr = reverseTargetSequence[i]
 		if curr.hasChild(instr) {
 			curr = curr.children[instr]
@@ -126,15 +126,17 @@ func (t *TrieNode) Rop(target string, isa isa.ISA) ([]uint, error) {
 	return gadgetAddrs, nil
 }
 
+// All hex characters are 1 byte, so indexing directly into the string is Ok
 func parseTarget(target string, instructionSize int) ([]string, error) {
 
 	if len(target) % instructionSize != 0 {
 		return nil, errors.New("malformed target: target length modulo instruction size not equal to 0")
 	}
 
+	hexCharsPerByte := 2
 	var splitTarget []string
-	for i := 0; i < len(target); i += instructionSize {
-		splitTarget = append(splitTarget, target[i:i+instructionSize])
+	for i := 0; i < len(target); i += (instructionSize * hexCharsPerByte) {
+		splitTarget = append(splitTarget, target[i: i + (instructionSize * hexCharsPerByte)])
 	}
 	reverse(splitTarget)
 	return splitTarget, nil

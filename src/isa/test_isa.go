@@ -7,7 +7,7 @@ func (TestISA) InstructionSize() int {
 }
 
 func (TestISA) GadgetTerminator() string {
-	return "z"
+	return "z_"
 }
 
 func (TestISA) Name() string {

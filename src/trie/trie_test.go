@@ -1,12 +1,8 @@
 package trie
 
 import (
-	// "fmt"
 	"iago/src/isa"
-	// "maps"
 	"reflect"
-	// "slices"
-	// "strconv"
 	"testing"
 )
 
@@ -33,45 +29,45 @@ func equals(t1 *TrieNode, t2 *TrieNode) bool {
 func TestBuildTrie(t *testing.T) {
 
 	var testInstructionStream = []isa.Instruction{
-		{Op: "b", Vaddr: 1},
-		{Op: "a", Vaddr: 2},
-		{Op: "z", Vaddr: 3},
+		{Op: "b_", Vaddr: 1},
+		{Op: "a_", Vaddr: 2},
+		{Op: "z_", Vaddr: 3},
 
-		{Op: "c", Vaddr: 4},
-		{Op: "a", Vaddr: 5},
-		{Op: "z", Vaddr: 6},
+		{Op: "c_", Vaddr: 4},
+		{Op: "a_", Vaddr: 5},
+		{Op: "z_", Vaddr: 6},
 
-		{Op: "f", Vaddr: 7},
-		{Op: "u", Vaddr: 8},
-		{Op: "z", Vaddr: 9},
-		{Op: "z", Vaddr: 10},
+		{Op: "f_", Vaddr: 7},
+		{Op: "u_", Vaddr: 8},
+		{Op: "z_", Vaddr: 9},
+		{Op: "z_", Vaddr: 10},
 	}
 
 	expectedTrie := &TrieNode{
 		data:        testInstructionStream[9],
 		failureLink: nil,
 		children: map[string]*TrieNode{
-			"u": &TrieNode{
+			"u_": &TrieNode{
 				data:        testInstructionStream[7],
 				failureLink: nil,
 				children: map[string]*TrieNode{
-					"f": &TrieNode{
+					"f_": &TrieNode{
 						data:        testInstructionStream[6],
 						failureLink: nil,
 						children:    make(map[string]*TrieNode, 0),
 					},
 				},
 			},
-			"a": &TrieNode{
+			"a_": &TrieNode{
 				data:        testInstructionStream[4],
 				failureLink: nil,
 				children: map[string]*TrieNode{
-					"c": &TrieNode{
+					"c_": &TrieNode{
 						data:        testInstructionStream[3],
 						failureLink: nil,
 						children:    make(map[string]*TrieNode, 0),
 					},
-					"b": &TrieNode{
+					"b_": &TrieNode{
 						data:        testInstructionStream[0],
 						failureLink: nil,
 						children:    make(map[string]*TrieNode, 0),
@@ -91,27 +87,27 @@ func TestBuildTrie(t *testing.T) {
 func TestFailureLinks(t *testing.T) {
 
 	var testInstructionStream = []isa.Instruction{
-		{Op: "c", Vaddr: 1},
-		{Op: "a", Vaddr: 2},
-		{Op: "z", Vaddr: 3},
+		{Op: "c_", Vaddr: 1},
+		{Op: "a_", Vaddr: 2},
+		{Op: "z_", Vaddr: 3},
 
-		{Op: "b", Vaddr: 4},
-		{Op: "a", Vaddr: 5},
-		{Op: "z", Vaddr: 6},
+		{Op: "b_", Vaddr: 4},
+		{Op: "a_", Vaddr: 5},
+		{Op: "z_", Vaddr: 6},
 
-		{Op: "a", Vaddr: 7},
-		{Op: "b", Vaddr: 8},
-		{Op: "z", Vaddr: 9},
+		{Op: "a_", Vaddr: 7},
+		{Op: "b_", Vaddr: 8},
+		{Op: "z_", Vaddr: 9},
 	}
 
 	root := buildTrie(testInstructionStream, isa.TestISA{})
 	root.buildFailureLinks()
 
-	a := root.children["a"]
-	b := root.children["b"]
-	ab := a.children["b"]
-	ba := b.children["a"]
-	ac := a.children["c"]
+	a := root.children["a_"]
+	b := root.children["b_"]
+	ab := a.children["b_"]
+	ba := b.children["a_"]
+	ac := a.children["c_"]
 
 	if ab.failureLink != b {
 		t.Fail()
@@ -130,36 +126,36 @@ func TestFailureLinks(t *testing.T) {
 
 func TestHasChild(t *testing.T) {
 	var testInstructionStream = []isa.Instruction{
-		{Op: "b", Vaddr: 1},
-		{Op: "a", Vaddr: 2},
-		{Op: "z", Vaddr: 3},
+		{Op: "b_", Vaddr: 1},
+		{Op: "a_", Vaddr: 2},
+		{Op: "z_", Vaddr: 3},
 
-		{Op: "c", Vaddr: 4},
-		{Op: "a", Vaddr: 5},
-		{Op: "z", Vaddr: 6},
+		{Op: "c_", Vaddr: 4},
+		{Op: "a_", Vaddr: 5},
+		{Op: "z_", Vaddr: 6},
 
-		{Op: "f", Vaddr: 7},
-		{Op: "u", Vaddr: 8},
-		{Op: "z", Vaddr: 9},
-		{Op: "z", Vaddr: 10},
+		{Op: "f_", Vaddr: 7},
+		{Op: "u_", Vaddr: 8},
+		{Op: "z_", Vaddr: 9},
+		{Op: "z_", Vaddr: 10},
 	}
 
 	root := buildTrie(testInstructionStream, isa.TestISA{})
 	root.buildFailureLinks()
 
-	if !root.hasChild("u") || !root.hasChild("a") {
+	if !root.hasChild("u_") || !root.hasChild("a_") {
 		t.Fail()
 	}
-	if !root.children["a"].hasChild("b") || !root.children["a"].hasChild("c") {
+	if !root.children["a_"].hasChild("b_") || !root.children["a_"].hasChild("c_") {
 		t.Fail()
 	}
-	if !root.children["u"].hasChild("f") {
+	if !root.children["u_"].hasChild("f_") {
 		t.Fail()
 	}
-	if root.hasChild("q") {
+	if root.hasChild("q_") {
 		t.Fail()
 	}
-	if root.children["a"].children["b"].hasChild("q") {
+	if root.children["a_"].children["b_"].hasChild("q_") {
 		t.Fail()
 	}
 
@@ -173,15 +169,15 @@ func TestParseTarget(t *testing.T) {
 	if err != nil {
 		t.Error("Error on instruction size 1 case")
 	}
-	if !reflect.DeepEqual(res, []string{"g", "n", "i", "r", "t", "s", "t", "s", "e", "t"}) {
+	if !reflect.DeepEqual(res, []string{"ng", "ri", "st", "st", "te"}) {
 		t.Error("Failed on instruction size 1 case")
 	}
 
-	res, err = parseTarget("teststring", 2)
+	res, err = parseTarget("aabbccddeeff", 2)
 	if err != nil {
 		t.Error("Error on instruction size 2 case")
 	}
-	if !reflect.DeepEqual(res, []string{"ng", "ri", "st", "st", "te"}) {
+	if !reflect.DeepEqual(res, []string{"eeff", "ccdd", "aabb"}) {
 		t.Error("Error on instruction size 2 case")
 	}
 
@@ -193,20 +189,20 @@ func TestParseTarget(t *testing.T) {
 
 func TestRop(t *testing.T) {
 	var testInstructionStream = []isa.Instruction{
-		{Op: "i", Vaddr: 1},
-		{Op: "a", Vaddr: 2},
-		{Op: "g", Vaddr: 3},
-		{Op: "o", Vaddr: 4},
-		{Op: "z", Vaddr: 5},
+		{Op: "i_", Vaddr: 1},
+		{Op: "a_", Vaddr: 2},
+		{Op: "g_", Vaddr: 3},
+		{Op: "o_", Vaddr: 4},
+		{Op: "z_", Vaddr: 5},
 
-		{Op: "o", Vaddr: 6},
-		{Op: "t", Vaddr: 7},
-		{Op: "h", Vaddr: 8},
-		{Op: "e", Vaddr: 9},
-		{Op: "l", Vaddr: 10},
-		{Op: "l", Vaddr: 11},
-		{Op: "o", Vaddr: 12},
-		{Op: "z", Vaddr: 13},
+		{Op: "o_", Vaddr: 6},
+		{Op: "t_", Vaddr: 7},
+		{Op: "h_", Vaddr: 8},
+		{Op: "e_", Vaddr: 9},
+		{Op: "l_", Vaddr: 10},
+		{Op: "l_", Vaddr: 11},
+		{Op: "o_", Vaddr: 12},
+		{Op: "z_", Vaddr: 13},
 	}
 
 	root := buildTrie(testInstructionStream, isa.TestISA{})
@@ -217,41 +213,41 @@ func TestRop(t *testing.T) {
 	var gAddrs []uint
 	var err error
 
-	gAddrs, err = root.Rop("iago", isa.TestISA{})
+	gAddrs, err = root.Rop("i_a_g_o_", isa.TestISA{})
 	if err != nil {
-		t.Errorf("Error on target iago: %s", err)
+		t.Errorf("Error on target i_a_g_o_: %s", err)
 	}
 	if len(gAddrs) != 1 || gAddrs[0] != 1 {
-		t.Errorf("Wrong gadgets on target: iago \n Expected: [1], Actual: %v\n", gAddrs)
+		t.Errorf("Wrong gadgets on target: i_a_g_o_ \n Expected: [1], Actual: %v\n", gAddrs)
 	}
 
-	gAddrs, err = root.Rop("othello", isa.TestISA{})
+	gAddrs, err = root.Rop("o_t_h_e_l_l_o_", isa.TestISA{})
 	if err != nil {
-		t.Errorf("Error on target othello: %s", err)
+		t.Errorf("Error on target o_t_h_e_l_l_o_: %s", err)
 	}
 	if len(gAddrs) != 1 || gAddrs[0] != 6 {
-		t.Errorf("Wrong gadgets on target: othello \n Expected: [6], Actual: %v\n", gAddrs)
+		t.Errorf("Wrong gadgets on target: o_t_h_e_l_l_o_ \n Expected: [6], Actual: %v\n", gAddrs)
 	}
 
-	gAddrs, err = root.Rop("go", isa.TestISA{})
+	gAddrs, err = root.Rop("g_o_", isa.TestISA{})
 	if err != nil {
-		t.Errorf("Error on target go: %s", err)
+		t.Errorf("Error on target g_o_: %s", err)
 	}
 	if len(gAddrs) != 1 || gAddrs[0] != 3 {
-		t.Errorf("Wrong gadgets on target: go \n Expected: [3], Actual: %v\n", gAddrs)
+		t.Errorf("Wrong gadgets on target: g_o_ \n Expected: [3], Actual: %v\n", gAddrs)
 	}
 
-	gAddrs, err = root.Rop("helloiago", isa.TestISA{})
+	gAddrs, err = root.Rop("h_e_l_l_o_i_a_g_o_", isa.TestISA{})
 	if err != nil {
-		t.Errorf("Error on target helloiago: %s", err)
+		t.Errorf("Error on target h_e_l_l_o_i_a_g_o_: %s", err)
 	}
 	if len(gAddrs) != 2 || gAddrs[0] != 8 || gAddrs[1] != 1 {
-		t.Errorf("Wrong gadgets on target: helloiago \n Expected: [8 1], Actual: %v\n", gAddrs)
+		t.Errorf("Wrong gadgets on target: h_e_l_l_o_i_a_g_o_ \n Expected: [8 1], Actual: %v\n", gAddrs)
 	}
 
-	gAddrs, err = root.Rop("nothello", isa.TestISA{})
+	gAddrs, err = root.Rop("n_o_t_h_e_l_l_o_", isa.TestISA{})
 	if err == nil {
-		t.Error("No error on target: nothello")
+		t.Error("No error on target: n_o_t_h_e_l_l_o_")
 	}
 
 }
