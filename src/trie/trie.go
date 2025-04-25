@@ -97,7 +97,7 @@ func (t *TrieNode) hasChild(target string) bool {
 }
 
 func (t *TrieNode) Rop(target string, isa isa.ISA) ([]uint, error) {
-	reverseTargetSequence, err := parseTarget(target, isa.InstructionSize())
+	reverseTargetSequence, err := parseTarget(target, isa)
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +114,9 @@ func (t *TrieNode) Rop(target string, isa isa.ISA) ([]uint, error) {
 			i++
 		} else { // take failure link
 			if curr == root {
-				return nil, errors.New("insufficient gadgets to build target payload")
+				errmsg := fmt.Sprintf("insufficient gadgets to build target payload. At root, could not transition on %s", instr)
+				return nil, errors.New(errmsg)
+				// return nil, errors.New("insufficient gadgets to build target payload")
 			}
 			gadgetAddrs = append(gadgetAddrs, curr.data.Vaddr)
 			curr = curr.failureLink
@@ -127,7 +129,9 @@ func (t *TrieNode) Rop(target string, isa isa.ISA) ([]uint, error) {
 }
 
 // All hex characters are 1 byte, so indexing directly into the string is Ok
-func parseTarget(target string, instructionSize int) ([]string, error) {
+func parseTarget(target string, isa isa.ISA) ([]string, error) {
+
+	instructionSize := isa.InstructionSize()
 
 	if len(target) % instructionSize != 0 {
 		return nil, errors.New("malformed target: target length modulo instruction size not equal to 0")
@@ -139,7 +143,13 @@ func parseTarget(target string, instructionSize int) ([]string, error) {
 		splitTarget = append(splitTarget, target[i: i + (instructionSize * hexCharsPerByte)])
 	}
 	reverse(splitTarget)
-	return splitTarget, nil
+
+	if splitTarget[0] != isa.GadgetTerminator() {
+		return nil, errors.New("malformed target: target does not begin with a gadget terminator")
+	}
+
+	targetWithoutGadgetTerminator := splitTarget[1:]
+	return targetWithoutGadgetTerminator, nil
 }
 
 func (t *TrieNode) DrawTrie(addressRepBase int) {

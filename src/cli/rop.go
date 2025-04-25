@@ -79,7 +79,7 @@ func WriteChainToFile(chain []uint, arch uint, endianness string, outFile *os.Fi
 	if endianness == "big" {
 		byteorder = binary.BigEndian
 	} else {
-		byteorder = binary.BigEndian
+		byteorder = binary.LittleEndian
 	}
 
 	for _, gAddr := range chain {

@@ -1,13 +1,15 @@
 package cli
 
+/* ---------------------------- Integration Tests --------------------------- */
+
 import (
-	"testing"
-	"os"
-	"iago/src/global"
 	"encoding/binary"
+	"iago/src/global"
+	"os"
+	"testing"
 )
 
-func TestWriteChainToFile(t *testing.T) {
+func TestCommandSequence(t *testing.T) {
 
 	t.Cleanup(cleanup)
 
@@ -59,7 +61,7 @@ func TestWriteChainToFile(t *testing.T) {
 	}
 
 	for i := range len(expected) {
-		if binary.LittleEndian.Uint32(actual[i*4: (i*5)]) != uint32(expected[i]) {
+		if binary.LittleEndian.Uint32(actual[i*4:(i*5)]) != uint32(expected[i]) {
 			t.Error("chain in file differs from chain generated")
 		}
 	}

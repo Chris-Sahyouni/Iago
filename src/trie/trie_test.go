@@ -165,7 +165,7 @@ func TestParseTarget(t *testing.T) {
 	var res []string
 	var err error
 
-	res, err = parseTarget("teststring", 1)
+	res, err = parseTarget("teststringz_", isa.TestISA{})
 	if err != nil {
 		t.Error("Error on instruction size 1 case")
 	}
@@ -173,7 +173,7 @@ func TestParseTarget(t *testing.T) {
 		t.Error("Failed on instruction size 1 case")
 	}
 
-	res, err = parseTarget("aabbccddeeff", 2)
+	res, err = parseTarget("aabbccddeeffzz__", isa.TestISA2{})
 	if err != nil {
 		t.Error("Error on instruction size 2 case")
 	}
@@ -181,7 +181,7 @@ func TestParseTarget(t *testing.T) {
 		t.Error("Error on instruction size 2 case")
 	}
 
-	res, err = parseTarget("oddlength", 2)
+	res, err = parseTarget("oddlengthzz__", isa.TestISA2{})
 	if err == nil {
 		t.Error("No error when len(target) % instructionSize != 0")
 	}
@@ -213,41 +213,41 @@ func TestRop(t *testing.T) {
 	var gAddrs []uint
 	var err error
 
-	gAddrs, err = root.Rop("i_a_g_o_", isa.TestISA{})
+	gAddrs, err = root.Rop("i_a_g_o_z_", isa.TestISA{})
 	if err != nil {
-		t.Errorf("Error on target i_a_g_o_: %s", err)
+		t.Errorf("Error on target i_a_g_o_z_: %s", err)
 	}
 	if len(gAddrs) != 1 || gAddrs[0] != 1 {
-		t.Errorf("Wrong gadgets on target: i_a_g_o_ \n Expected: [1], Actual: %v\n", gAddrs)
+		t.Errorf("Wrong gadgets on target: i_a_g_o_z_ \n Expected: [1], Actual: %v\n", gAddrs)
 	}
 
-	gAddrs, err = root.Rop("o_t_h_e_l_l_o_", isa.TestISA{})
+	gAddrs, err = root.Rop("o_t_h_e_l_l_o_z_", isa.TestISA{})
 	if err != nil {
-		t.Errorf("Error on target o_t_h_e_l_l_o_: %s", err)
+		t.Errorf("Error on target o_t_h_e_l_l_o_z_: %s", err)
 	}
 	if len(gAddrs) != 1 || gAddrs[0] != 6 {
-		t.Errorf("Wrong gadgets on target: o_t_h_e_l_l_o_ \n Expected: [6], Actual: %v\n", gAddrs)
+		t.Errorf("Wrong gadgets on target: o_t_h_e_l_l_o_z_ \n Expected: [6], Actual: %v\n", gAddrs)
 	}
 
-	gAddrs, err = root.Rop("g_o_", isa.TestISA{})
+	gAddrs, err = root.Rop("g_o_z_", isa.TestISA{})
 	if err != nil {
-		t.Errorf("Error on target g_o_: %s", err)
+		t.Errorf("Error on target g_o_z_: %s", err)
 	}
 	if len(gAddrs) != 1 || gAddrs[0] != 3 {
-		t.Errorf("Wrong gadgets on target: g_o_ \n Expected: [3], Actual: %v\n", gAddrs)
+		t.Errorf("Wrong gadgets on target: g_o_z_ \n Expected: [3], Actual: %v\n", gAddrs)
 	}
 
-	gAddrs, err = root.Rop("h_e_l_l_o_i_a_g_o_", isa.TestISA{})
+	gAddrs, err = root.Rop("h_e_l_l_o_i_a_g_o_z_", isa.TestISA{})
 	if err != nil {
-		t.Errorf("Error on target h_e_l_l_o_i_a_g_o_: %s", err)
+		t.Errorf("Error on target h_e_l_l_o_i_a_g_o_z_: %s", err)
 	}
 	if len(gAddrs) != 2 || gAddrs[0] != 8 || gAddrs[1] != 1 {
-		t.Errorf("Wrong gadgets on target: h_e_l_l_o_i_a_g_o_ \n Expected: [8 1], Actual: %v\n", gAddrs)
+		t.Errorf("Wrong gadgets on target: h_e_l_l_o_i_a_g_o_z_ \n Expected: [8 1], Actual: %v\n", gAddrs)
 	}
 
-	gAddrs, err = root.Rop("n_o_t_h_e_l_l_o_", isa.TestISA{})
+	gAddrs, err = root.Rop("n_o_t_h_e_l_l_o_z_", isa.TestISA{})
 	if err == nil {
-		t.Error("No error on target: n_o_t_h_e_l_l_o_")
+		t.Error("No error on target: n_o_t_h_e_l_l_o_z_")
 	}
 
 }
