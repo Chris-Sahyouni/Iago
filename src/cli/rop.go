@@ -83,12 +83,13 @@ func WriteChainToFile(chain []uint, arch uint, endianness string, outFile *os.Fi
 	}
 
 	for _, gAddr := range chain {
-		var gAddrBytes []byte
 		if arch == 32 {
+			gAddrBytes := make([]byte, 4)
 			byteorder.PutUint32(gAddrBytes, uint32(gAddr))
 			outFile.Write(gAddrBytes)
 		}
 		if arch == 64 {
+			gAddrBytes := make([]byte, 8)
 			byteorder.PutUint64(gAddrBytes, uint64(gAddr))
 			outFile.Write(gAddrBytes)
 		}
