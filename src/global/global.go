@@ -14,5 +14,4 @@ type GlobalState struct {
 		PaddingLength int
 		Chain         []uint
 	}
-	History *History
 }
