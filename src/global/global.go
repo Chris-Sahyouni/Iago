@@ -2,6 +2,7 @@ package global
 
 import (
 	"iago/src/exe"
+	"iago/src/term"
 )
 
 type GlobalState struct {
@@ -14,4 +15,5 @@ type GlobalState struct {
 		PaddingLength int
 		Chain         []uint
 	}
+	Terminal term.Terminal
 }

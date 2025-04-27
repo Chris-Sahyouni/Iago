@@ -12,6 +12,8 @@ func main() {
 	fmt.Println("Iago interactive shell")
 	fmt.Println("Run help to view available commands")
 
+	terminal := term.RawTerminal()
+
 	globalState := global.GlobalState{
 		CurrentFile: nil,
 		CurrentTarget: struct {
@@ -28,9 +30,9 @@ func main() {
 			PaddingLength: 0,
 			Chain:         nil,
 		},
+		Terminal: terminal,
 	}
 
-	terminal := term.RawTerminal()
 
 	for {
 		line, err := terminal.ReadLine()

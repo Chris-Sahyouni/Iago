@@ -12,7 +12,7 @@ func (q Quit) ValidArgs() bool {
 }
 
 func (Quit) Execute(globalState *global.GlobalState) error {
-	globalState.History.Flush()
+	globalState.Terminal.Restore()
 	os.Exit(0)
 	return nil
 }
