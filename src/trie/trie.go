@@ -2,10 +2,10 @@ package trie
 
 import (
 	"errors"
+	"fmt"
 	"iago/src/isa"
 	"maps"
 	"slices"
-	"fmt"
 	"strconv"
 )
 
@@ -133,14 +133,14 @@ func parseTarget(target string, isa isa.ISA) ([]string, error) {
 
 	instructionSize := isa.InstructionSize()
 
-	if len(target) % instructionSize != 0 {
+	if len(target)%instructionSize != 0 {
 		return nil, errors.New("malformed target: target length modulo instruction size not equal to 0")
 	}
 
 	hexCharsPerByte := 2
 	var splitTarget []string
 	for i := 0; i < len(target); i += (instructionSize * hexCharsPerByte) {
-		splitTarget = append(splitTarget, target[i: i + (instructionSize * hexCharsPerByte)])
+		splitTarget = append(splitTarget, target[i:i+(instructionSize*hexCharsPerByte)])
 	}
 	reverse(splitTarget)
 
@@ -152,6 +152,7 @@ func parseTarget(target string, isa isa.ISA) ([]string, error) {
 	return targetWithoutGadgetTerminator, nil
 }
 
+// for testing
 func (t *TrieNode) DrawTrie(addressRepBase int) {
 	var lines []string
 	currLevel := []*TrieNode{t}

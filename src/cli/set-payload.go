@@ -29,7 +29,7 @@ func (s SetPayload) ValidArgs() bool {
 
 func (s SetPayload) Execute(globalState *global.GlobalState) error {
 	// if len(s.args) == 0 {
-	// 	fmt.Println("Would open interactive editor in this case")
+	// 	global.Println("Would open interactive editor in this case")
 	// 	return nil
 	// }
 

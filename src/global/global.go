@@ -12,7 +12,7 @@ type GlobalState struct {
 	}
 	CurrentPayload struct {
 		PaddingLength int
-		Chain []uint
+		Chain         []uint
 	}
 	History *History
 }

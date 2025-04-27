@@ -24,7 +24,7 @@ func (s SetTarget) ValidArgs() bool {
 
 func (s SetTarget) Execute(globalState *global.GlobalState) error {
 	// if len(s.args) == 0 {
-	// 	fmt.Println("Would open interactive editor in this case")
+	// 	global.Println("Would open interactive editor in this case")
 	// 	return nil
 	// }
 

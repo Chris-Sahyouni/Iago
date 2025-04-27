@@ -2,8 +2,8 @@ package cli
 
 import (
 	"errors"
-	"fmt"
 	"iago/src/global"
+	"iago/src/term"
 )
 
 type CatTarget struct{ args Args }
@@ -21,8 +21,8 @@ func (c CatTarget) Execute(globalState *global.GlobalState) error {
 		return errors.New("no target payload set")
 	}
 
-	fmt.Println("Target Payload:", globalState.CurrentTarget.Title)
+	term.Println("Target Payload:", globalState.CurrentTarget.Title)
 	// the contents will need some formatting
-	fmt.Println(globalState.CurrentTarget.Contents)
+	term.Println(globalState.CurrentTarget.Contents)
 	return nil
 }

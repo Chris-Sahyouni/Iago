@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"iago/src/global"
+	"iago/src/term"
 )
 
 type CatPayload struct{ args Args }
@@ -24,9 +25,9 @@ func (c CatPayload) Execute(globalState *global.GlobalState) error {
 		return errors.New("no payload generated or set")
 	}
 
-	fmt.Println("Current Payload:")
-	fmt.Println("  Padding Bytes:", globalState.CurrentPayload.PaddingLength)
-	fmt.Println("  Chain:")
+	term.Println("Current Payload:")
+	term.Println("  Padding Bytes:", globalState.CurrentPayload.PaddingLength)
+	term.Println("  Chain:")
 	for _, gaddr := range globalState.CurrentPayload.Chain {
 		fmt.Printf("    %x\n", gaddr)
 	}

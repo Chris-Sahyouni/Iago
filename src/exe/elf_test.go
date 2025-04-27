@@ -2,12 +2,12 @@ package exe
 
 import (
 	"encoding/hex"
-	"fmt"
 	"iago/src/isa"
 	"os"
 	"reflect"
 	"slices"
 	"testing"
+	"fmt"
 )
 
 var testBinaries = map[string][]byte{}
@@ -61,8 +61,8 @@ func TestNewElf(t *testing.T) {
 	}{
 		"square32": {Arch: 32, End: "little", Isa: isa.X86{}},
 		"square64": {Arch: 64, End: "little", Isa: isa.X86{}},
-		"vuln32": {Arch: 32, End: "little", Isa: isa.X86{}},
-		"vuln64": {Arch: 64, End: "little", Isa: isa.X86{}},
+		"vuln32":   {Arch: 32, End: "little", Isa: isa.X86{}},
+		"vuln64":   {Arch: 64, End: "little", Isa: isa.X86{}},
 	}
 	for name, contents := range testBinaries {
 		expected := expectedResults[name]
@@ -202,48 +202,48 @@ func TestInstructionStream(t *testing.T) {
 	testContents := []byte("abcdefz")
 
 	testElf := Elf{
-		arch: 0,
-		endianness: "little",
-		isa: isa.TestISA{},
-		contents: testContents,
+		arch:                     0,
+		endianness:               "little",
+		isa:                      isa.TestISA{},
+		contents:                 testContents,
 		programHeaderTableOffset: 0,
-		reverseInstructionTrie: nil,
+		reverseInstructionTrie:   nil,
 	}
 
 	testSegments := []segment{
 		{ // a,b,c
-			VAddr: 0,
+			VAddr:  0,
 			Offset: 0,
-			Size: 3,
+			Size:   3,
 		},
 		{ // d
-			VAddr: 20,
+			VAddr:  20,
 			Offset: 3,
-			Size: 1,
+			Size:   1,
 		},
 		{ // empty
-			VAddr: 30,
+			VAddr:  30,
 			Offset: 5,
-			Size: 0,
+			Size:   0,
 		},
 	}
 
 	expected := []isa.Instruction{
 		{
 			Vaddr: 0,
-			Op: hex.EncodeToString([]byte("a")),
+			Op:    hex.EncodeToString([]byte("a")),
 		},
 		{
 			Vaddr: 1,
-			Op: hex.EncodeToString([]byte("b")),
+			Op:    hex.EncodeToString([]byte("b")),
 		},
 		{
 			Vaddr: 2,
-			Op: hex.EncodeToString([]byte("c")),
+			Op:    hex.EncodeToString([]byte("c")),
 		},
 		{
 			Vaddr: 20,
-			Op: hex.EncodeToString([]byte("d")),
+			Op:    hex.EncodeToString([]byte("d")),
 		},
 	}
 

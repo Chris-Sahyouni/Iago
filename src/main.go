@@ -1,11 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"iago/src/cli"
 	"iago/src/global"
-	"os"
+	"iago/src/term"
 )
 
 func main() {
@@ -27,39 +26,31 @@ func main() {
 		},
 		CurrentPayload: struct {
 			PaddingLength int
-			Chain []uint
+			Chain         []uint
 		}{
 			PaddingLength: 0,
-			Chain: nil,
+			Chain:         nil,
 		},
 		History: &history,
 	}
 
-	reader := bufio.NewReader(os.Stdin)
+	terminal := term.RawTerminal()
+
 	for {
-		var line string
-		fmt.Print("> ")
-
-		line, err := reader.ReadString('\n')
-		if err != nil {
-			fmt.Println(err)
-			continue
-		}
-
-		history.Add(line)
-
+		line, err := terminal.ReadLine()
 		cmd, err := cli.ParseLine(line)
 		if err != nil {
-			fmt.Println(err)
+			term.Println(err)
 			continue
 		}
 		if !cmd.ValidArgs() {
-			fmt.Println("invalid arguments")
+			term.Println("invalid arguments")
 		}
 		err = cmd.Execute(&globalState)
 		if err != nil {
-			fmt.Println(err)
+			term.Println(err)
 		}
+
 	}
 
 }

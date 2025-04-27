@@ -4,9 +4,9 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"errors"
-	"fmt"
 	"iago/src/isa"
 	"iago/src/trie"
+	"iago/src/term"
 )
 
 type Elf struct {
@@ -15,7 +15,7 @@ type Elf struct {
 	isa                      isa.ISA
 	contents                 []byte
 	programHeaderTableOffset uint
-	reverseInstructionTrie *trie.TrieNode
+	reverseInstructionTrie   *trie.TrieNode
 }
 
 type elfField struct {
@@ -51,10 +51,10 @@ var programHeaderEntry = map[string]elfField{
 }
 
 func (e *Elf) Info() {
-	fmt.Println("  File Type: ELF")
-	fmt.Println("  Arch:", e.arch)
-	fmt.Println("  ISA:", e.isa.Name())
-	fmt.Println("  Endianness:", e.endianness)
+	term.Println("  File Type: ELF")
+	term.Println("  Arch:", e.arch)
+	term.Println("  ISA:", e.isa.Name())
+	term.Println("  Endianness:", e.endianness)
 }
 
 func NewElf(elfContents []byte) (Executable, error) {
@@ -225,7 +225,7 @@ func (e *Elf) locateExecutableSegments() ([]segment, error) {
 		}
 
 		var executableFlagMask uint = 0x1
-		if flags & executableFlagMask > 0 {
+		if flags&executableFlagMask > 0 {
 			segmentOffset, err := e.fieldValue("segment offset", programHeaderEntry, entryOffset)
 			if err != nil {
 				return nil, err
