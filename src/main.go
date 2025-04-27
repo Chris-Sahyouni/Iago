@@ -13,7 +13,9 @@ func main() {
 	fmt.Println("Iago interactive shell")
 	fmt.Println("Run help to view available commands")
 
-	reader := bufio.NewReader(os.Stdin)
+	history := global.History{}
+	history.Init()
+
 	globalState := global.GlobalState{
 		CurrentFile: nil,
 		CurrentTarget: struct {
@@ -23,17 +25,29 @@ func main() {
 			Title:    "",
 			Contents: "",
 		},
+		CurrentPayload: struct {
+			PaddingLength int
+			Chain []uint
+		}{
+			PaddingLength: 0,
+			Chain: nil,
+		},
+		History: &history,
 	}
 
+	reader := bufio.NewReader(os.Stdin)
 	for {
 		var line string
 		fmt.Print("> ")
+
 		line, err := reader.ReadString('\n')
 		if err != nil {
-			// change this later
 			fmt.Println(err)
 			continue
 		}
+
+		history.Add(line)
+
 		cmd, err := cli.ParseLine(line)
 		if err != nil {
 			fmt.Println(err)

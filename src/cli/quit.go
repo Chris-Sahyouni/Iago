@@ -11,7 +11,8 @@ func (q Quit) ValidArgs() bool {
 	return len(q.args) == 0
 }
 
-func (Quit) Execute(_ *global.GlobalState) error {
+func (Quit) Execute(globalState *global.GlobalState) error {
+	globalState.History.Flush()
 	os.Exit(0)
 	return nil
 }
