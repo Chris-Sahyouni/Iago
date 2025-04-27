@@ -36,7 +36,15 @@ func (l Load) Execute(globalState *global.GlobalState) error {
 	if err != nil {
 		return err
 	}
+
 	globalState.CurrentFile = newExecutable
+
+	// invalid current payload on loading new file
+	globalState.CurrentPayload = struct{PaddingLength int; Chain []uint}{
+		0, nil,
+	}
+
+
 
 	newExecutable.Info()
 
