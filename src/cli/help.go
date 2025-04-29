@@ -23,6 +23,7 @@ func (h Help) Execute(_ *global.GlobalState) error {
 	SetTarget{}.Help()
 	CatPayload{}.Help()
 	SetPayload{}.Help()
+	Find{}.Help()
 	Rop{}.Help()
 	Pad{}.Help()
 	Quit{}.Help()

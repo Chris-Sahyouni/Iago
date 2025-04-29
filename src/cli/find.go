@@ -1,0 +1,35 @@
+package cli
+
+import (
+	"fmt"
+	"iago/src/global"
+	"iago/src/term"
+	"strings"
+)
+
+type Find struct {args Args}
+
+func (f Find) ValidArgs() bool {
+	if len(f.args) != 1 {
+		return false
+	}
+
+	_, ok := f.args["default"]
+	return ok
+}
+
+func (f Find) Execute(globalState *global.GlobalState) error {
+	target, _ := f.args["default"]
+	currFile := globalState.CurrentFile
+	vaddr, err := currFile.ReverseInstructionTrie().Find(target, currFile.Isa())
+	if err != nil {
+		return err
+	}
+	fmtString := fmt.Sprintf("virtual address: %x", vaddr)
+	term.Println(fmtString)
+	return nil
+}
+
+func (Find) Help() {
+	term.Println("    find <gadget>" + strings.Repeat(" ", SPACE_BETWEEN-len("    find <gadget>")) + "Searches the current binary for the machine code <gadget> and returns the virtual address of it if found")
+}
