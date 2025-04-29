@@ -3,6 +3,8 @@ package cli
 import (
 	"encoding/hex"
 	"iago/src/global"
+	"iago/src/term"
+	"strings"
 	"os"
 )
 
@@ -39,4 +41,9 @@ func (s SetTarget) Execute(globalState *global.GlobalState) error {
 	globalState.CurrentTarget.Contents = contentString
 
 	return nil
+}
+
+
+func (SetTarget) Help() {
+	term.Println("    set-target <path>" + strings.Repeat(" ", SPACE_BETWEEN-len("set-target <path>")) + "Set the target payload")
 }

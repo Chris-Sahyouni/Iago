@@ -57,7 +57,10 @@ func (e *Elf) Info() {
 	term.Println("  Endianness:", e.endianness)
 }
 
-func NewElf(elfContents []byte) (Executable, error) {
+func NewElf(elfContents []byte, args map[string]string) (Executable, error) {
+
+	// to detect thumb mode in ARM binaries
+	_, thumb := args["---thumb"]
 
 	arch, err := elfArch(elfContents)
 	if err != nil {
@@ -77,7 +80,7 @@ func NewElf(elfContents []byte) (Executable, error) {
 		isa:                      nil,
 	}
 
-	err = elf.setISA()
+	err = elf.setISA(thumb)
 	if err != nil {
 		return nil, err
 	}
@@ -174,22 +177,37 @@ func (e *Elf) fieldValue(field string, targetHeader map[string]elfField, baseOff
 	return 0, nil // never reached
 }
 
-func (e *Elf) setISA() error {
+func (e *Elf) setISA(thumb bool) error {
 
 	// maps the value present in the elf file to an ISA
 	var supportedISAs = map[uint]isa.ISA{
 		0x03: isa.X86{},
 		0x3e: isa.X86{},
+		0x28: isa.ARM{}, // requires check for thumb mode
+		0xb7: isa.AArch64{},
 	}
 
-	value, err := e.fieldValue("isa", elfHeader, 0)
+	elfIsaValue, err := e.fieldValue("isa", elfHeader, 0)
 	if err != nil {
 		return err
 	}
 
-	isa, ok := supportedISAs[value]
+	elfIsa, ok := supportedISAs[elfIsaValue]
 	if ok {
-		e.isa = isa
+
+		if elfIsaValue == 0x28 { // arm
+			if thumb {
+				elfIsa = isa.Thumb{}
+			} else {
+				term.Println("ARM binary detected. To target thumb mode re-load using the --thumb flag")
+			}
+		} else {
+			if thumb {
+				term.Println("--thumb flag ignored: --thumb flag should only be used on ARM binaries")
+			}
+		}
+
+		e.isa = elfIsa
 		return nil
 	}
 

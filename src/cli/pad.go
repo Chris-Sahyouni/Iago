@@ -3,6 +3,7 @@ package cli
 import (
 	"errors"
 	"iago/src/global"
+	"iago/src/term"
 	"os"
 	"strconv"
 	"strings"
@@ -40,4 +41,8 @@ func (p Pad) Execute(globalState *global.GlobalState) error {
 	WriteChainToFile(globalState.CurrentPayload.Chain, globalState.CurrentFile.Arch(), globalState.CurrentFile.Endianness(), outFile)
 
 	return nil
+}
+
+func (Pad) Help() {
+	term.Println("    pad <bytes>" + strings.Repeat(" ", SPACE_BETWEEN-len("pad <bytes>")) + "Generate a new payload by prepending <bytes> number of bytes of padding to the current payload.")
 }

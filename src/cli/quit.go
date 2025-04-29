@@ -3,6 +3,8 @@ package cli
 import (
 	"os"
 	"iago/src/global"
+	"iago/src/term"
+	"strings"
 )
 
 type Quit struct{ args Args }
@@ -17,4 +19,6 @@ func (Quit) Execute(globalState *global.GlobalState) error {
 	return nil
 }
 
-
+func (Quit) Help() {
+	term.Println("    quit" + strings.Repeat(" ", SPACE_BETWEEN-len("quit")) + "Exit the interactive shell")
+}

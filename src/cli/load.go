@@ -5,26 +5,37 @@ import (
 	"errors"
 	"iago/src/exe"
 	"iago/src/global"
+	"iago/src/term"
 	"os"
+	"strings"
 )
 
 type Load struct{ args Args }
 
 func (l Load) ValidArgs() bool {
-	if len(l.args) != 1 {
+	if len(l.args) != 1 || len(l.args) != 2 {
 		return false
 	}
+
+	if len(l.args) == 2 {
+		_, ok := l.args["--thumb"]
+		if !ok {
+			return false
+		}
+	}
+
 	_, ok := l.args["default"]
 	return ok
 }
 
 func (l Load) Execute(globalState *global.GlobalState) error {
 	path := l.args["default"]
+
 	fileBytes, err := os.ReadFile(path)
 	if err != nil {
 		return err
 	}
-	exeConstructors := map[string]func([]byte) (exe.Executable, error){
+	exeConstructors := map[string]func([]byte, Args) (exe.Executable, error){
 		"elf": exe.NewElf,
 	}
 	fileType, err := determineFileType(fileBytes)
@@ -32,18 +43,17 @@ func (l Load) Execute(globalState *global.GlobalState) error {
 		return err
 	}
 	constructor := exeConstructors[fileType]
-	newExecutable, err := constructor(fileBytes)
+	newExecutable, err := constructor(fileBytes, l.args)
 	if err != nil {
 		return err
 	}
 
 	globalState.CurrentFile = newExecutable
 
-	// invalid current payload on loading new file
+	// invalidate current payload on loading new file
 	globalState.CurrentPayload = struct{PaddingLength int; Chain []uint}{
 		0, nil,
 	}
-
 
 
 	newExecutable.Info()
@@ -58,4 +68,10 @@ func determineFileType(fileBytes []byte) (string, error) {
 	}
 
 	return "", errors.New("unrecognized file format")
+}
+
+
+func (Load) Help() {
+	term.Println("    load <path>" + strings.Repeat(" ", SPACE_BETWEEN-len("load <path>")) + "Sets the current file for analysis")
+	term.Println("        --thumb" + strings.Repeat(" ", SPACE_BETWEEN-len("    --thumb")) + "Targets thumb mode for ARM binaries")
 }

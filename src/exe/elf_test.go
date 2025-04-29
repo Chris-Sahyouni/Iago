@@ -11,6 +11,7 @@ import (
 )
 
 var testBinaries = map[string][]byte{}
+var throwawayArgs = map[string]string{}
 
 // reads in test binaries
 func setup() {
@@ -66,7 +67,7 @@ func TestNewElf(t *testing.T) {
 	}
 	for name, contents := range testBinaries {
 		expected := expectedResults[name]
-		actual, err := NewElf(contents)
+		actual, err := NewElf(contents, throwawayArgs)
 
 		if name == "corrupt" {
 			if err == nil {
@@ -108,7 +109,7 @@ func TestFieldValue(t *testing.T) {
 		}
 
 		expected := expectedResults[name]
-		elf, err := NewElf(contents)
+		elf, err := NewElf(contents, throwawayArgs)
 
 		if err != nil {
 			t.Error(err)
@@ -177,7 +178,7 @@ func TestLocateExecutableSegments(t *testing.T) {
 		}
 
 		expected := expectedResults[name]
-		elf, err := NewElf(contents)
+		elf, err := NewElf(contents, throwawayArgs)
 
 		if err != nil {
 			t.Error(err)

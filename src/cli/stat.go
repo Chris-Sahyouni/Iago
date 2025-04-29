@@ -3,6 +3,8 @@ package cli
 import (
 	"errors"
 	"iago/src/global"
+	"iago/src/term"
+	"strings"
 )
 
 type Stat struct{ args Args }
@@ -17,4 +19,8 @@ func (Stat) Execute(globalState *global.GlobalState) error {
 	}
 	globalState.CurrentFile.Info()
 	return nil
+}
+
+func (Stat) Help() {
+	term.Println("    stat" + strings.Repeat(" ", SPACE_BETWEEN-len("stat")) + "View the current file's metadata")
 }

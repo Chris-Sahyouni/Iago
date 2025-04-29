@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"iago/src/global"
 	"iago/src/term"
+	"strings"
 )
 
 type CatPayload struct{ args Args }
@@ -14,12 +15,6 @@ func (c CatPayload) ValidArgs() bool {
 }
 
 func (c CatPayload) Execute(globalState *global.GlobalState) error {
-	// if (globalState.CurrentPayload.Chain) == struct {
-	// 	PaddingLength int
-	// 	Chain []uint
-	// }{0, nil} {
-	// 	return errors.New("no payload generated yet")
-	// }
 
 	if globalState.CurrentPayload.Chain == nil {
 		return errors.New("no payload generated or set")
@@ -32,4 +27,9 @@ func (c CatPayload) Execute(globalState *global.GlobalState) error {
 		fmt.Printf("    %x\n", gaddr)
 	}
 	return nil
+}
+
+func (CatPayload) Help() {
+	term.Println("    cat-payload" + strings.Repeat(" ", SPACE_BETWEEN-len("cat-payload")) + "View the current payload")
+
 }

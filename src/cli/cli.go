@@ -9,6 +9,7 @@ import (
 type Command interface {
 	Execute(*global.GlobalState) error
 	ValidArgs() bool
+	Help()
 }
 
 type Args = map[string]string

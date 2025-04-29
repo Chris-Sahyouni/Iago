@@ -4,6 +4,7 @@ import (
 	"errors"
 	"iago/src/global"
 	"iago/src/term"
+	"strings"
 )
 
 type CatTarget struct{ args Args }
@@ -26,3 +27,8 @@ func (c CatTarget) Execute(globalState *global.GlobalState) error {
 	term.Println(globalState.CurrentTarget.Contents)
 	return nil
 }
+
+func (CatTarget) Help() {
+	term.Println("    cat-target" + strings.Repeat(" ", SPACE_BETWEEN-len("cat-target")) + "View the current target payload")
+}
+

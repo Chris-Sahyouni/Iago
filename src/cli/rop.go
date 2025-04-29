@@ -4,28 +4,14 @@ import (
 	"encoding/binary"
 	"errors"
 	"iago/src/global"
+	"iago/src/term"
 	"os"
+	"strings"
 )
 
 type Rop struct{ args Args }
 
 func (r Rop) ValidArgs() bool {
-
-	// might do something like this later to generalize arg management for all commands
-	// allowed := []struct{
-	// 	short string
-	// 	long string
-	// }{
-	// 	{short: "-f", long: "--file"},
-	// 	{short: "-t", long: "--target"},
-	// 	{short: "-o", long: "--out"},
-	// }
-
-	// for _, flag := range r.args {
-	// 	if !slices.ContainsFunc(allowed, func(e struct{short string; long string}) bool {return flag == e.short || flag == e.long}) {
-	// 		return false
-	// 	}
-	// }
 
 	if len(r.args) == 0 {
 		return true
@@ -94,4 +80,10 @@ func WriteChainToFile(chain []uint, arch uint, endianness string, outFile *os.Fi
 			outFile.Write(gAddrBytes)
 		}
 	}
+}
+
+func (Rop) Help() {
+	term.Println("    rop [OPTIONS]" + strings.Repeat(" ", SPACE_BETWEEN-len("rop [OPTIONS]")) + "Generate a ROP chain for the target file and payload")
+	term.Println("        -o FILE" + strings.Repeat(" ", SPACE_BETWEEN - len("    -o FILE")) + "Specify output file (optional)")
+
 }

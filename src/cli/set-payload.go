@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"iago/src/global"
+	"iago/src/term"
 	"os"
 	"strconv"
 	"strings"
@@ -110,4 +111,9 @@ func ReadChainFromFileContents(contents []byte, arch uint, endianness string, pa
 		}
 	}
 	return chain
+}
+
+func (SetPayload) Help() {
+	term.Println("    set-payload <path>" + strings.Repeat(" ", SPACE_BETWEEN-len("set-payload <path>")) + "Set the current payload.")
+	term.Println(strings.Repeat(" ", SPACE_BETWEEN) + "If the desired payload has been prepended with padding, the file name must contain the substring \"pad\" followed by the number of bytes of padding. e.g. \"pad64\"")
 }
