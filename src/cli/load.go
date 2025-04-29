@@ -72,6 +72,6 @@ func determineFileType(fileBytes []byte) (string, error) {
 
 
 func (Load) Help() {
-	term.Println("    load <path>" + strings.Repeat(" ", SPACE_BETWEEN-len("load <path>")) + "Sets the current file for analysis")
+	term.Println("    load <path> [OPTIONS]" + strings.Repeat(" ", SPACE_BETWEEN-len("load <path> [OPTIONS]")) + "Sets the current file for analysis")
 	term.Println("        --thumb" + strings.Repeat(" ", SPACE_BETWEEN-len("    --thumb")) + "Targets thumb mode for ARM binaries")
 }
