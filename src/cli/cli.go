@@ -15,7 +15,8 @@ type Args = map[string]string
 
 
 /*
-For this project any flags (anything beginning with - or --) take an argument directly following it.
+For this project any flags beginning with - take an argument directly following it.
+Any flags beginning with -- do not take an argument
 Any non-flag argument is considered the commands singular default argument (i.e <path> in load <path>)
 and will be represented by "default": "<value>" in the args dictionary.
 */
@@ -34,22 +35,27 @@ func ParseLine(line string) (Command, error) {
 		return commandDispatch(cmdName, args)
 	}
 
-	flagState := false
+	expectingArg := false
 	defaultSet := false
 	var flag string
 	for _, val := range flagsAndArgs {
 		if val[0] == '-' { // flag
 
-			if flagState {
+			if expectingArg {
 				return nil, errors.New("invalid arguments")
 			}
 
-			flag = val
-			flagState = true
-		} else { // default or flag value
-			if flagState { // flag value
+			if val[1] == '-' { // non-arg-taking flag
+				args[val] = ""
+			} else { // arg-taking flag
+				flag = val
+				expectingArg = true
+			}
+
+		} else { // default or flag arg
+			if expectingArg { // flag arg
 				args[flag] = val
-				flagState = false
+				expectingArg = false
 			} else { // default
 				if defaultSet {
 					return nil, errors.New("invalid arguments")
