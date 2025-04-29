@@ -7,7 +7,7 @@ func (ARM) InstructionSize() int {
 }
 
 func (ARM) GadgetTerminator() string {
-	return "4770"
+	return "e12fff1e"
 }
 
 func (ARM) Name() string {
