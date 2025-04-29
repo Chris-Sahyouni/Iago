@@ -285,8 +285,8 @@ func (e *Elf) InstructionStream(executableSegments []segment) []isa.Instruction 
 	return instructionStream
 }
 
-func (e *Elf) Rop(target string) ([]uint, error) {
-	return e.reverseInstructionTrie.Rop(target, e.isa)
+func (e *Elf) ReverseInstructionTrie() *trie.TrieNode {
+	return e.reverseInstructionTrie
 }
 
 func (e *Elf) Endianness() string {
@@ -295,4 +295,8 @@ func (e *Elf) Endianness() string {
 
 func (e *Elf) Arch() uint {
 	return e.arch
+}
+
+func (e *Elf) Isa() isa.ISA {
+	return e.isa
 }

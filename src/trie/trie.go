@@ -128,6 +128,26 @@ func (t *TrieNode) Rop(target string, isa isa.ISA) ([]uint, error) {
 	return gadgetAddrs, nil
 }
 
+func (t *TrieNode) Find(target string, isa isa.ISA) (uint, error) {
+	reverseTargetSequence, err := parseTarget(target, isa)
+	if err != nil {
+		return 0, err
+	}
+
+	curr := t
+
+	var instr string
+	for i := 0; i < len(reverseTargetSequence); i++ {
+		instr = reverseTargetSequence[i]
+		if curr.hasChild(instr) {
+			curr = curr.children[instr]
+		} else {
+			return 0, errors.New("gadget not found")
+		}
+	}
+	return curr.data.Vaddr, nil
+}
+
 // All hex characters are 1 byte, so indexing directly into the string is Ok
 func parseTarget(target string, isa isa.ISA) ([]string, error) {
 

@@ -47,7 +47,8 @@ func (r Rop) Execute(globalState *global.GlobalState) error {
 	}
 	defer outFile.Close()
 
-	gadgetAddrs, err := globalState.CurrentFile.Rop(globalState.CurrentTarget.Contents)
+	currFile := globalState.CurrentFile
+	gadgetAddrs, err := currFile.ReverseInstructionTrie().Rop(globalState.CurrentTarget.Contents, currFile.Isa())
 	if err != nil {
 		return err
 	}
