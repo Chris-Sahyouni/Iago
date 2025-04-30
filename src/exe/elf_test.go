@@ -62,6 +62,7 @@ func TestNewElf(t *testing.T) {
 	}{
 		"square32": {Arch: 32, End: "little", Isa: isa.X86{}},
 		"square64": {Arch: 64, End: "little", Isa: isa.X86{}},
+		"squareARM": {Arch: 32, End: "little", Isa: isa.ARM{}},
 		"vuln32":   {Arch: 32, End: "little", Isa: isa.X86{}},
 		"vuln64":   {Arch: 64, End: "little", Isa: isa.X86{}},
 	}
@@ -98,6 +99,7 @@ func TestFieldValue(t *testing.T) {
 	}{
 		"square32": {EntryPnt: 0x1070, PHdrEntrySz: 32, PHdrVirtAddr: 0x34, Flags: 0x4},
 		"square64": {EntryPnt: 0x1040, PHdrEntrySz: 56, PHdrVirtAddr: 0x40, Flags: 0x4},
+		"squareARM": {EntryPnt: 0x102d8, PHdrEntrySz: 32, PHdrVirtAddr: 0x10480, Flags: 0x4},
 	}
 
 	skip := []string{"corrupt", "vuln32", "vuln64"}
@@ -165,6 +167,13 @@ func TestLocateExecutableSegments(t *testing.T) {
 				Offset: 0x1000,
 				VAddr:  0x1000,
 				Size:   0x1e5,
+			},
+		},
+		"squareARM": {
+			segment{
+				Offset: 0x0,
+				VAddr: 0x10000,
+				Size: 0x48c,
 			},
 		},
 	}
