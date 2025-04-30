@@ -251,3 +251,47 @@ func TestRop(t *testing.T) {
 	}
 
 }
+
+func TestFind(t *testing.T) {
+	var testInstructionStream = []isa.Instruction{
+		{Op: "i_", Vaddr: 1},
+		{Op: "a_", Vaddr: 2},
+		{Op: "g_", Vaddr: 3},
+		{Op: "o_", Vaddr: 4},
+		{Op: "z_", Vaddr: 5},
+
+		{Op: "o_", Vaddr: 6},
+		{Op: "t_", Vaddr: 7},
+		{Op: "h_", Vaddr: 8},
+		{Op: "e_", Vaddr: 9},
+		{Op: "l_", Vaddr: 10},
+		{Op: "l_", Vaddr: 11},
+		{Op: "o_", Vaddr: 12},
+		{Op: "z_", Vaddr: 13},
+	}
+
+	root := buildTrie(testInstructionStream, isa.TestISA{})
+	root.buildFailureLinks()
+
+	addr, err := root.Find("i_a_g_o_z_", isa.TestISA{})
+	if err != nil {
+		t.Error("error on find: i_a_g_o_z_")
+	}
+	if addr != 1 {
+		t.Error("wrong virtual address returned for gadget i_a_g_o_z_")
+	}
+
+	addr, err = root.Find("l_o_z_", isa.TestISA{})
+	if err != nil {
+		t.Error("error on find: l_o_z_")
+	}
+	if addr != 11 {
+		t.Error("wrong virtual address returned for gadget l_o_z_")
+	}
+
+	addr, err = root.Find("n_o_i_a_g_o_z_", isa.TestISA{})
+	if err == nil {
+		t.Error("did not error on gadget not in trie")
+	}
+
+}
