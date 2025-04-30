@@ -13,7 +13,7 @@ import (
 type Load struct{ args Args }
 
 func (l Load) ValidArgs() bool {
-	if len(l.args) != 1 || len(l.args) != 2 {
+	if len(l.args) != 1 && len(l.args) != 2 {
 		return false
 	}
 
