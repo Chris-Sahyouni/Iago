@@ -8,7 +8,7 @@ void main(int argc, char* argv[]) {
         printf("Usage: <Buffer contents> <pointer value>");
     }
 
-    vuln(argv[0], atoi(argv[1]));
+    vuln(argv[1], atoi(argv[2]));
 }
 
 void vuln(char* in, int ptr_val) {
