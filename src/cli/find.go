@@ -31,5 +31,5 @@ func (f Find) Execute(globalState *global.GlobalState) error {
 }
 
 func (Find) Help() {
-	term.Println("    find <gadget>" + strings.Repeat(" ", SPACE_BETWEEN-len("    find <gadget>")) + "Searches the current binary for the machine code <gadget> and returns the virtual address of it if found")
+	term.Println("    find <gadget>" + strings.Repeat(" ", SPACE_BETWEEN-len("find <gadget>")) + "Searches the current binary for the machine code <gadget> and returns the virtual address of it if found")
 }
