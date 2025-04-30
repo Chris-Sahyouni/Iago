@@ -165,7 +165,7 @@ func parseTarget(target string, isa isa.ISA) ([]string, error) {
 	reverse(splitTarget)
 
 	if splitTarget[0] != isa.GadgetTerminator() {
-		return nil, errors.New("malformed target: target does not begin with a gadget terminator")
+		return nil, errors.New("malformed target: target does not end with a gadget terminator")
 	}
 
 	targetWithoutGadgetTerminator := splitTarget[1:]

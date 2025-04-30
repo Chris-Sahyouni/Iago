@@ -31,5 +31,6 @@ func (f Find) Execute(globalState *global.GlobalState) error {
 }
 
 func (Find) Help() {
-	term.Println("    find <gadget>" + strings.Repeat(" ", SPACE_BETWEEN-len("find <gadget>")) + "Searches the current binary for the machine code <gadget> and returns the virtual address of it if found")
+	term.Println("    find <gadget>" + strings.Repeat(" ", SPACE_BETWEEN-len("find <gadget>")) + "Searches the current binary for <gadget> and returns its virtual address if found")
+	term.Println(strings.Repeat(" ", SPACE_BETWEEN+4) + "<gadget> should be inputted as the hex representation of the machine code of <gadget>")
 }
