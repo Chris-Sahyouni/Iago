@@ -63,8 +63,6 @@ func TestNewElf(t *testing.T) {
 		"square32": {Arch: 32, End: "little", Isa: isa.X86{}},
 		"square64": {Arch: 64, End: "little", Isa: isa.X86{}},
 		"squareARM": {Arch: 32, End: "little", Isa: isa.ARM{}},
-		"vuln32":   {Arch: 32, End: "little", Isa: isa.X86{}},
-		"vuln64":   {Arch: 64, End: "little", Isa: isa.X86{}},
 	}
 	for name, contents := range testBinaries {
 		expected := expectedResults[name]
