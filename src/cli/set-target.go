@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"encoding/hex"
 	"iago/src/global"
 	"iago/src/term"
 	"strings"
@@ -36,7 +35,10 @@ func (s SetTarget) Execute(globalState *global.GlobalState) error {
 		return err
 	}
 
-	contentString := hex.EncodeToString(contents)
+	contentString := string(contents)
+
+	term.Println(contentString)
+
 	globalState.CurrentTarget.Title = file
 	globalState.CurrentTarget.Contents = contentString
 

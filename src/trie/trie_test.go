@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-// Ok making this recursive since it will only be used on the above Trie ever
+// Ok making this recursive since it will only ever be used on the test tries in this file
 func equals(t1 *TrieNode, t2 *TrieNode) bool {
 	if t1.data != t2.data {
 		return false
@@ -165,7 +165,7 @@ func TestParseTarget(t *testing.T) {
 	var res []string
 	var err error
 
-	res, err = parseTarget("teststringz_", isa.TestISA{})
+	res, err = parseTarget("teststring", isa.TestISA{})
 	if err != nil {
 		t.Error("Error on instruction size 1 case")
 	}
@@ -173,7 +173,7 @@ func TestParseTarget(t *testing.T) {
 		t.Error("Failed on instruction size 1 case")
 	}
 
-	res, err = parseTarget("aabbccddeeffzz__", isa.TestISA2{})
+	res, err = parseTarget("aabbccddeeff", isa.TestISA2{})
 	if err != nil {
 		t.Error("Error on instruction size 2 case")
 	}
@@ -181,7 +181,7 @@ func TestParseTarget(t *testing.T) {
 		t.Error("Error on instruction size 2 case")
 	}
 
-	res, err = parseTarget("oddlengthzz__", isa.TestISA2{})
+	res, err = parseTarget("oddlength", isa.TestISA2{})
 	if err == nil {
 		t.Error("No error when len(target) % instructionSize != 0")
 	}
@@ -213,41 +213,41 @@ func TestRop(t *testing.T) {
 	var gAddrs []uint
 	var err error
 
-	gAddrs, err = root.Rop("i_a_g_o_z_", isa.TestISA{})
+	gAddrs, err = root.Rop("i_a_g_o_", isa.TestISA{})
 	if err != nil {
-		t.Errorf("Error on target i_a_g_o_z_: %s", err)
+		t.Errorf("Error on target i_a_g_o_: %s", err)
 	}
 	if len(gAddrs) != 1 || gAddrs[0] != 1 {
-		t.Errorf("Wrong gadgets on target: i_a_g_o_z_ \n Expected: [1], Actual: %v\n", gAddrs)
+		t.Errorf("Wrong gadgets on target: i_a_g_o_ \n Expected: [1], Actual: %v\n", gAddrs)
 	}
 
-	gAddrs, err = root.Rop("o_t_h_e_l_l_o_z_", isa.TestISA{})
+	gAddrs, err = root.Rop("o_t_h_e_l_l_o_", isa.TestISA{})
 	if err != nil {
-		t.Errorf("Error on target o_t_h_e_l_l_o_z_: %s", err)
+		t.Errorf("Error on target o_t_h_e_l_l_o_: %s", err)
 	}
 	if len(gAddrs) != 1 || gAddrs[0] != 6 {
-		t.Errorf("Wrong gadgets on target: o_t_h_e_l_l_o_z_ \n Expected: [6], Actual: %v\n", gAddrs)
+		t.Errorf("Wrong gadgets on target: o_t_h_e_l_l_o_ \n Expected: [6], Actual: %v\n", gAddrs)
 	}
 
-	gAddrs, err = root.Rop("g_o_z_", isa.TestISA{})
+	gAddrs, err = root.Rop("g_o_", isa.TestISA{})
 	if err != nil {
-		t.Errorf("Error on target g_o_z_: %s", err)
+		t.Errorf("Error on target g_o_: %s", err)
 	}
 	if len(gAddrs) != 1 || gAddrs[0] != 3 {
-		t.Errorf("Wrong gadgets on target: g_o_z_ \n Expected: [3], Actual: %v\n", gAddrs)
+		t.Errorf("Wrong gadgets on target: g_o_ \n Expected: [3], Actual: %v\n", gAddrs)
 	}
 
-	gAddrs, err = root.Rop("h_e_l_l_o_i_a_g_o_z_", isa.TestISA{})
+	gAddrs, err = root.Rop("h_e_l_l_o_i_a_g_o_", isa.TestISA{})
 	if err != nil {
-		t.Errorf("Error on target h_e_l_l_o_i_a_g_o_z_: %s", err)
+		t.Errorf("Error on target h_e_l_l_o_i_a_g_o_: %s", err)
 	}
 	if len(gAddrs) != 2 || gAddrs[0] != 8 || gAddrs[1] != 1 {
-		t.Errorf("Wrong gadgets on target: h_e_l_l_o_i_a_g_o_z_ \n Expected: [8 1], Actual: %v\n", gAddrs)
+		t.Errorf("Wrong gadgets on target: h_e_l_l_o_i_a_g_o_ \n Expected: [8 1], Actual: %v\n", gAddrs)
 	}
 
-	gAddrs, err = root.Rop("n_o_t_h_e_l_l_o_z_", isa.TestISA{})
+	gAddrs, err = root.Rop("n_o_t_h_e_l_l_o_", isa.TestISA{})
 	if err == nil {
-		t.Error("No error on target: n_o_t_h_e_l_l_o_z_")
+		t.Error("No error on target: n_o_t_h_e_l_l_o_")
 	}
 
 }
@@ -273,23 +273,23 @@ func TestFind(t *testing.T) {
 	root := buildTrie(testInstructionStream, isa.TestISA{})
 	root.buildFailureLinks()
 
-	addr, err := root.Find("i_a_g_o_z_", isa.TestISA{})
+	addr, err := root.Find("i_a_g_o_", isa.TestISA{})
 	if err != nil {
-		t.Error("error on find: i_a_g_o_z_")
+		t.Error("error on find: i_a_g_o_")
 	}
 	if addr != 1 {
-		t.Error("wrong virtual address returned for gadget i_a_g_o_z_")
+		t.Error("wrong virtual address returned for gadget i_a_g_o_")
 	}
 
-	addr, err = root.Find("l_o_z_", isa.TestISA{})
+	addr, err = root.Find("l_o_", isa.TestISA{})
 	if err != nil {
-		t.Error("error on find: l_o_z_")
+		t.Error("error on find: l_o_")
 	}
 	if addr != 11 {
-		t.Error("wrong virtual address returned for gadget l_o_z_")
+		t.Error("wrong virtual address returned for gadget l_o_")
 	}
 
-	addr, err = root.Find("n_o_i_a_g_o_z_", isa.TestISA{})
+	addr, err = root.Find("n_o_i_a_g_o_", isa.TestISA{})
 	if err == nil {
 		t.Error("did not error on gadget not in trie")
 	}

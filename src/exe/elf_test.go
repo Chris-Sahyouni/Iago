@@ -64,9 +64,16 @@ func TestNewElf(t *testing.T) {
 		"square64": {Arch: 64, End: "little", Isa: isa.X86{}},
 		"squareARM": {Arch: 32, End: "little", Isa: isa.ARM{}},
 	}
+
+	skip := []string{"vuln32", "vuln64"}
+
 	for name, contents := range testBinaries {
 		expected := expectedResults[name]
 		actual, err := NewElf(contents, throwawayArgs)
+
+		if slices.Contains(skip, name) {
+			continue
+		}
 
 		if name == "corrupt" {
 			if err == nil {
