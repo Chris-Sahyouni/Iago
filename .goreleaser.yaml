@@ -16,7 +16,7 @@ before:
     - go mod tidy
 
 builds:
-  - main: ./src/main
+  - main: ./src/main.go
     env:
       - CGO_ENABLED=0
     goos:
