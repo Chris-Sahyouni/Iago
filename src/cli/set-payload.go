@@ -14,10 +14,6 @@ import (
 type SetPayload struct{ args Args }
 
 func (s SetPayload) ValidArgs() bool {
-	// if len(s.args) == 0 {
-	// 	return true
-	// 	// will open interactive editor in this case
-	// }
 
 	if len(s.args) != 1 {
 		return false
@@ -29,10 +25,6 @@ func (s SetPayload) ValidArgs() bool {
 }
 
 func (s SetPayload) Execute(globalState *global.GlobalState) error {
-	// if len(s.args) == 0 {
-	// 	global.Println("Would open interactive editor in this case")
-	// 	return nil
-	// }
 
 	fileName := s.args["default"]
 
@@ -114,7 +106,7 @@ func ReadChainFromFileContents(contents []byte, arch uint, endianness string, pa
 }
 
 func (SetPayload) Help() {
-	term.Println("    set-payload <path>" + strings.Repeat(" ", SPACE_BETWEEN-len("set-payload <path>")) + "Set the current payload.")
+	term.Println("    set-payload <path>" + strings.Repeat(" ", SPACE_BETWEEN-len("set-payload <path>")) + "Set the current payload,")
 	term.Println(strings.Repeat(" ", SPACE_BETWEEN+4) + "If the desired payload has been prepended with padding,")
 	term.Println(strings.Repeat(" ", SPACE_BETWEEN+4), "the file name must contain the substring \"pad\" followed by the number of bytes of padding. e.g. \"pad64\"")
 }

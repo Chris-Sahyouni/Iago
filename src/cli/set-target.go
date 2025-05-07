@@ -10,10 +10,10 @@ import (
 type SetTarget struct{ args Args }
 
 func (s SetTarget) ValidArgs() bool {
-	// if len(s.args) == 0 {
-	// 	// will open interactive editor in this case
-	// 	return true
-	// }
+
+	if len(s.args) == 0 {
+		return true
+	}
 
 	if len(s.args) != 1 {
 		return false
@@ -24,10 +24,18 @@ func (s SetTarget) ValidArgs() bool {
 }
 
 func (s SetTarget) Execute(globalState *global.GlobalState) error {
-	// if len(s.args) == 0 {
-	// 	global.Println("Would open interactive editor in this case")
-	// 	return nil
-	// }
+
+	if len(s.args) == 0 {
+		term.Println("input target:")
+		target, err := globalState.Terminal.ReadLine()
+		if err != nil {
+			return err
+		}
+		globalState.CurrentTarget.Contents = target
+		globalState.CurrentTarget.Title = ""
+		term.Println("target set to: " + target)
+		return nil
+	}
 
 	file := s.args["default"]
 	contents, err := os.ReadFile(file)
@@ -47,5 +55,5 @@ func (s SetTarget) Execute(globalState *global.GlobalState) error {
 
 
 func (SetTarget) Help() {
-	term.Println("    set-target <path>" + strings.Repeat(" ", SPACE_BETWEEN-len("set-target <path>")) + "Set the target payload")
+	term.Println("    set-target <path>" + strings.Repeat(" ", SPACE_BETWEEN-len("set-target <path>")) + "Set the target payload. Alternatively, exclude <path> to manually input the target")
 }
