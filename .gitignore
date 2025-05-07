@@ -1,3 +1,5 @@
 /bin/
 /test_programs/bin/
 todo.txt
+# Added by goreleaser init:
+dist/
