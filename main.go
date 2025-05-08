@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/Chris-Sahyouni/iago/src/cli"
-	"github.com/Chris-Sahyouni/iago/src/global"
-	"github.com/Chris-Sahyouni/iago/src/term"
+
+	"github.com/Chris-Sahyouni/iago/cli"
+	"github.com/Chris-Sahyouni/iago/global"
+	"github.com/Chris-Sahyouni/iago/term"
 )
 
 func main() {
@@ -32,7 +33,6 @@ func main() {
 		},
 		Terminal: terminal,
 	}
-
 
 	for {
 		line, err := terminal.ReadLine()

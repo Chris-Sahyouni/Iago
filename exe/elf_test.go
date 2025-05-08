@@ -2,12 +2,13 @@ package exe
 
 import (
 	"encoding/hex"
-	"github.com/Chris-Sahyouni/iago/src/isa"
+	"fmt"
 	"os"
 	"reflect"
 	"slices"
 	"testing"
-	"fmt"
+
+	"github.com/Chris-Sahyouni/iago/isa"
 )
 
 var testBinaries = map[string][]byte{}
@@ -60,8 +61,8 @@ func TestNewElf(t *testing.T) {
 		End  string
 		Isa  isa.ISA
 	}{
-		"square32": {Arch: 32, End: "little", Isa: isa.X86{}},
-		"square64": {Arch: 64, End: "little", Isa: isa.X86{}},
+		"square32":  {Arch: 32, End: "little", Isa: isa.X86{}},
+		"square64":  {Arch: 64, End: "little", Isa: isa.X86{}},
 		"squareARM": {Arch: 32, End: "little", Isa: isa.ARM{}},
 	}
 
@@ -102,8 +103,8 @@ func TestFieldValue(t *testing.T) {
 		PHdrVirtAddr uint // of the first entry of the Program Header Table
 		Flags        uint // of the first entry of the Program Header Table
 	}{
-		"square32": {EntryPnt: 0x1070, PHdrEntrySz: 32, PHdrVirtAddr: 0x34, Flags: 0x4},
-		"square64": {EntryPnt: 0x1040, PHdrEntrySz: 56, PHdrVirtAddr: 0x40, Flags: 0x4},
+		"square32":  {EntryPnt: 0x1070, PHdrEntrySz: 32, PHdrVirtAddr: 0x34, Flags: 0x4},
+		"square64":  {EntryPnt: 0x1040, PHdrEntrySz: 56, PHdrVirtAddr: 0x40, Flags: 0x4},
 		"squareARM": {EntryPnt: 0x102d8, PHdrEntrySz: 32, PHdrVirtAddr: 0x10480, Flags: 0x4},
 	}
 
@@ -177,8 +178,8 @@ func TestLocateExecutableSegments(t *testing.T) {
 		"squareARM": {
 			segment{
 				Offset: 0x0,
-				VAddr: 0x10000,
-				Size: 0x48c,
+				VAddr:  0x10000,
+				Size:   0x48c,
 			},
 		},
 	}

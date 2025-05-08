@@ -2,12 +2,13 @@ package cli
 
 import (
 	"fmt"
-	"github.com/Chris-Sahyouni/iago/src/global"
-	"github.com/Chris-Sahyouni/iago/src/term"
 	"strings"
+
+	"github.com/Chris-Sahyouni/iago/global"
+	"github.com/Chris-Sahyouni/iago/term"
 )
 
-type Find struct {args Args}
+type Find struct{ args Args }
 
 func (f Find) ValidArgs() bool {
 	if len(f.args) != 1 {

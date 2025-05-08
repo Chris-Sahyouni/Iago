@@ -3,11 +3,12 @@ package cli
 import (
 	"bytes"
 	"errors"
-	"github.com/Chris-Sahyouni/iago/src/exe"
-	"github.com/Chris-Sahyouni/iago/src/global"
-	"github.com/Chris-Sahyouni/iago/src/term"
 	"os"
 	"strings"
+
+	"github.com/Chris-Sahyouni/iago/exe"
+	"github.com/Chris-Sahyouni/iago/global"
+	"github.com/Chris-Sahyouni/iago/term"
 )
 
 type Load struct{ args Args }
@@ -51,10 +52,12 @@ func (l Load) Execute(globalState *global.GlobalState) error {
 	globalState.CurrentFile = newExecutable
 
 	// invalidate current payload on loading new file
-	globalState.CurrentPayload = struct{PaddingLength int; Chain []uint}{
+	globalState.CurrentPayload = struct {
+		PaddingLength int
+		Chain         []uint
+	}{
 		0, nil,
 	}
-
 
 	newExecutable.Info()
 
@@ -69,7 +72,6 @@ func determineFileType(fileBytes []byte) (string, error) {
 
 	return "", errors.New("unrecognized file format")
 }
-
 
 func (Load) Help() {
 	term.Println("    load <path> [OPTIONS]" + strings.Repeat(" ", SPACE_BETWEEN-len("load <path> [OPTIONS]")) + "Sets the current file for analysis")

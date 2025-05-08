@@ -3,12 +3,13 @@ package cli
 import (
 	"encoding/binary"
 	"errors"
-	"github.com/Chris-Sahyouni/iago/src/global"
-	"github.com/Chris-Sahyouni/iago/src/term"
 	"os"
 	"strconv"
 	"strings"
 	"unicode"
+
+	"github.com/Chris-Sahyouni/iago/global"
+	"github.com/Chris-Sahyouni/iago/term"
 )
 
 type SetPayload struct{ args Args }

@@ -1,9 +1,10 @@
 package cli
 
 import (
-	"github.com/Chris-Sahyouni/iago/src/global"
-	"github.com/Chris-Sahyouni/iago/src/term"
 	"strings"
+
+	"github.com/Chris-Sahyouni/iago/global"
+	"github.com/Chris-Sahyouni/iago/term"
 )
 
 const SPACE_BETWEEN = 24

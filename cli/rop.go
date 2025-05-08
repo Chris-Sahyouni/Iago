@@ -3,10 +3,11 @@ package cli
 import (
 	"encoding/binary"
 	"errors"
-	"github.com/Chris-Sahyouni/iago/src/global"
-	"github.com/Chris-Sahyouni/iago/src/term"
 	"os"
 	"strings"
+
+	"github.com/Chris-Sahyouni/iago/global"
+	"github.com/Chris-Sahyouni/iago/term"
 )
 
 type Rop struct{ args Args }
@@ -85,6 +86,6 @@ func WriteChainToFile(chain []uint, arch uint, endianness string, outFile *os.Fi
 
 func (Rop) Help() {
 	term.Println("    rop [OPTIONS]" + strings.Repeat(" ", SPACE_BETWEEN-len("rop [OPTIONS]")) + "Generate a ROP chain for the target file and payload")
-	term.Println("        -o FILE" + strings.Repeat(" ", SPACE_BETWEEN - len("    -o FILE")) + "Specify output file (optional)")
+	term.Println("        -o FILE" + strings.Repeat(" ", SPACE_BETWEEN-len("    -o FILE")) + "Specify output file (optional)")
 
 }

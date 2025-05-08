@@ -3,10 +3,11 @@ package trie
 import (
 	"errors"
 	"fmt"
-	"github.com/Chris-Sahyouni/iago/src/isa"
 	"maps"
 	"slices"
 	"strconv"
+
+	"github.com/Chris-Sahyouni/iago/isa"
 )
 
 // Aho-Corasick Trie

@@ -2,11 +2,12 @@ package cli
 
 import (
 	"errors"
-	"github.com/Chris-Sahyouni/iago/src/global"
-	"github.com/Chris-Sahyouni/iago/src/term"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/Chris-Sahyouni/iago/global"
+	"github.com/Chris-Sahyouni/iago/term"
 )
 
 type Pad struct{ args Args }

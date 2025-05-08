@@ -4,9 +4,10 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"errors"
-	"github.com/Chris-Sahyouni/iago/src/isa"
-	"github.com/Chris-Sahyouni/iago/src/trie"
-	"github.com/Chris-Sahyouni/iago/src/term"
+
+	"github.com/Chris-Sahyouni/iago/isa"
+	"github.com/Chris-Sahyouni/iago/term"
+	"github.com/Chris-Sahyouni/iago/trie"
 )
 
 type Elf struct {

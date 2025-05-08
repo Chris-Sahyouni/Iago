@@ -1,10 +1,11 @@
 package cli
 
 import (
-	"github.com/Chris-Sahyouni/iago/src/global"
-	"github.com/Chris-Sahyouni/iago/src/term"
-	"strings"
 	"os"
+	"strings"
+
+	"github.com/Chris-Sahyouni/iago/global"
+	"github.com/Chris-Sahyouni/iago/term"
 )
 
 type SetTarget struct{ args Args }
@@ -52,7 +53,6 @@ func (s SetTarget) Execute(globalState *global.GlobalState) error {
 
 	return nil
 }
-
 
 func (SetTarget) Help() {
 	term.Println("    set-target <path>" + strings.Repeat(" ", SPACE_BETWEEN-len("set-target <path>")) + "Set the target payload. Alternatively, exclude <path> to manually input the target")

@@ -1,8 +1,8 @@
 package exe
 
 import (
-	"github.com/Chris-Sahyouni/iago/src/isa"
-	"github.com/Chris-Sahyouni/iago/src/trie"
+	"github.com/Chris-Sahyouni/iago/isa"
+	"github.com/Chris-Sahyouni/iago/trie"
 )
 
 type Executable interface {
@@ -13,4 +13,3 @@ type Executable interface {
 	Arch() uint
 	Isa() isa.ISA
 }
-

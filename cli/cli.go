@@ -2,8 +2,9 @@ package cli
 
 import (
 	"errors"
-	"github.com/Chris-Sahyouni/iago/src/global"
 	"strings"
+
+	"github.com/Chris-Sahyouni/iago/global"
 )
 
 type Command interface {
@@ -13,7 +14,6 @@ type Command interface {
 }
 
 type Args = map[string]string
-
 
 /*
 For this project any flags beginning with - take an argument directly following it.

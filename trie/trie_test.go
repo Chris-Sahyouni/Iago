@@ -1,9 +1,10 @@
 package trie
 
 import (
-	"github.com/Chris-Sahyouni/iago/src/isa"
 	"reflect"
 	"testing"
+
+	"github.com/Chris-Sahyouni/iago/isa"
 )
 
 // Ok making this recursive since it will only ever be used on the test tries in this file
