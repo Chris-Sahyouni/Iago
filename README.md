@@ -11,6 +11,11 @@ Iago is a tool for crafting Return-Oriented-Programming payloads.
 
 ## Installation
 
+### Binary Releases
+Binaries can be downloaded from the [releases](https://github.com/Chris-Sahyouni/iago/releases) page
+
+### `go install`
+
 
 
 
