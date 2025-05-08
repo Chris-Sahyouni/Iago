@@ -5,15 +5,15 @@ ARMCC = arm-linux-gnueabi-gcc
 all: build
 
 build:
-	go build -o bin/iago ./src/main.go
+	go build -o bin/iago main.go
 
 .PHONY: run
 run:
-	go run ./src/main.go
+	go run main.go
 
 .PHONY: test
 test:
-	go test ./src/... -v
+	go test ... -v
 
 .PHONY: clean
 clean:
