@@ -1,4 +1,4 @@
-module iago
+module github.com/Chris-Sahyouni/iago
 
 go 1.24.1
 

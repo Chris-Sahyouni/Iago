@@ -1,8 +1,8 @@
 package global
 
 import (
-	"iago/src/exe"
-	"iago/src/term"
+	"github.com/Chris-Sahyouni/iago/src/exe"
+	"github.com/Chris-Sahyouni/iago/src/term"
 )
 
 type GlobalState struct {

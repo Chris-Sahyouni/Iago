@@ -3,9 +3,9 @@ package cli
 import (
 	"bytes"
 	"errors"
-	"iago/src/exe"
-	"iago/src/global"
-	"iago/src/term"
+	"github.com/Chris-Sahyouni/iago/src/exe"
+	"github.com/Chris-Sahyouni/iago/src/global"
+	"github.com/Chris-Sahyouni/iago/src/term"
 	"os"
 	"strings"
 )

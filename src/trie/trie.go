@@ -3,7 +3,7 @@ package trie
 import (
 	"errors"
 	"fmt"
-	"iago/src/isa"
+	"github.com/Chris-Sahyouni/iago/src/isa"
 	"maps"
 	"slices"
 	"strconv"

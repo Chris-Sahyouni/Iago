@@ -2,7 +2,7 @@ package exe
 
 import (
 	"encoding/hex"
-	"iago/src/isa"
+	"github.com/Chris-Sahyouni/iago/src/isa"
 	"os"
 	"reflect"
 	"slices"

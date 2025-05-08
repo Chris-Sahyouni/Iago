@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"iago/src/cli"
-	"iago/src/global"
-	"iago/src/term"
+	"github.com/Chris-Sahyouni/iago/src/cli"
+	"github.com/Chris-Sahyouni/iago/src/global"
+	"github.com/Chris-Sahyouni/iago/src/term"
 )
 
 func main() {

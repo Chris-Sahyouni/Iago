@@ -1,7 +1,7 @@
 package trie
 
 import (
-	"iago/src/isa"
+	"github.com/Chris-Sahyouni/iago/src/isa"
 	"reflect"
 	"testing"
 )

@@ -2,8 +2,8 @@ package cli
 
 import (
 	"errors"
-	"iago/src/global"
-	"iago/src/term"
+	"github.com/Chris-Sahyouni/iago/src/global"
+	"github.com/Chris-Sahyouni/iago/src/term"
 	"strings"
 )
 

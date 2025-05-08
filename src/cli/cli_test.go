@@ -4,7 +4,7 @@ package cli
 
 import (
 	"encoding/binary"
-	"iago/src/global"
+	"github.com/Chris-Sahyouni/iago/src/global"
 	"os"
 	"testing"
 )

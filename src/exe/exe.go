@@ -1,8 +1,8 @@
 package exe
 
 import (
-	"iago/src/isa"
-	"iago/src/trie"
+	"github.com/Chris-Sahyouni/iago/src/isa"
+	"github.com/Chris-Sahyouni/iago/src/trie"
 )
 
 type Executable interface {
