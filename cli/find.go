@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -22,6 +23,11 @@ func (f Find) ValidArgs() bool {
 func (f Find) Execute(globalState *global.GlobalState) error {
 	target, _ := f.args["default"]
 	currFile := globalState.CurrentFile
+
+	if currFile == nil {
+		return errors.New("no target file specified")
+	}
+
 	vaddr, err := currFile.ReverseInstructionTrie().Find(target, currFile.Isa())
 	if err != nil {
 		return err
